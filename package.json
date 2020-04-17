@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/stripedpajamas/resl#readme",
   "dependencies": {
-    "fastify": "^2.13.1"
+    "fastify": "^2.13.1",
+    "ulid": "^2.3.0"
+  },
+  "devDependencies": {
+    "standard": "^14.3.3"
   }
 }

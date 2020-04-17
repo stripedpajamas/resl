@@ -1,13 +1,17 @@
 const Fastify = require('fastify')
+const run = require('./runner')
 
 const fastify = Fastify({ logger: true })
 
-fastify.get('/', async (request, reply) => {
+fastify.get('/', async () => {
   return { hello: 'world' }
 })
 
-fastify.post('/run', async (req, res) => {
-  return { body: req.body }
+fastify.post('/run', async (req) => {
+  if (!req.body) return {}
+
+  const { code } = req.body
+  return { output: await run(code) }
 })
 
 const start = async () => {
