@@ -15,15 +15,16 @@ fastify.post('/run', async (req, res) => {
 
   try {
     if (!req.body) return
+    req.log.info(req.body)
 
     const { text, response_url: responseUrl } = req.body
-
     const { language, code } = parseText(text)
     const output = await run(language, code)
+    const escapedOutput = escapeCodeBlock(output)
 
     await got.post(responseUrl, {
       json: {
-        text: '```' + output + '```'
+        text: '```' + escapedOutput + '```'
       }
     })
   } catch (e) {
@@ -37,11 +38,15 @@ fastify.post('/done', async (req, res) => {
   return {}
 })
 
-function parseText (text) {
-  const [language, ...codeWords] = text.split(' ')
-  let code = codeWords.join(' ')
+const parseText = (text) => {
+  const [language, ...codeLines] = text.split('\n')
+  let code = codeLines.join('\n')
   while (code[0] === '`') code = code.slice(1, code.length - 1)
   return { language, code }
+}
+
+const escapeCodeBlock = (text) => {
+  return text.replace('`', '\\`')
 }
 
 const start = async () => {
