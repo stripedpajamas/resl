@@ -24,6 +24,7 @@ fastify.post('/run', async (req, res) => {
 
     await got.post(responseUrl, {
       json: {
+        response_type: 'in_channel',
         text: escapedOutput ? '```' + escapedOutput + '```' : '```[No output]```'
       }
     })
