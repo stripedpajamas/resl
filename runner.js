@@ -1,39 +1,40 @@
-const fs = require('fs')
+const fs = require('fs').promises
 const cp = require('child_process')
-const util = require('util')
 const ulid = require('ulid')
+const languages = require('./languages')
 
-const writeFile = util.promisify(fs.writeFile)
-const deleteFile = util.promisify(fs.unlink)
-
-const buildArgs = (name) => [
-  'run',
-  '--rm',
-  '--name',
-  name,
-  '-v',
-  `${process.cwd()}:/usr/src/app`,
-  '-w',
-  '/usr/src/app',
-  'node:12-alpine',
-  'node',
-  `${name}.js`
-]
+const buildArgs = (config, name, file) => {
+  const { image, cmd } = config
+  return [
+    'run',
+    '--rm',
+    '--name',
+    name,
+    '-v',
+    `${process.cwd()}:/usr/src/app`,
+    '-w',
+    '/usr/src/app',
+    image,
+    cmd,
+    file
+  ]
+}
 
 module.exports = function run (language, code) {
-  if (typeof code !== 'string') return ''
+  const config = languages[language];
+  if (typeof code !== 'string' || !config) return ''
   return new Promise((resolve, reject) => {
     const name = ulid.ulid()
-    writeFile(`${name}.js`, code).then(() => {
+    const fileName = `${name}.${config.extension}`
+    fs.writeFile(fileName, code).then(() => {
       let output = Buffer.alloc(0)
-
-      const docker = cp.spawn('docker', buildArgs(name))
+      const docker = cp.spawn('docker', buildArgs(config, name, fileName))
       docker.stdout.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
       docker.stderr.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
 
       docker.on('error', (err) => { reject(err) })
       docker.on('exit', () => {
-        deleteFile(`${name}.js`).then(() => {
+        fs.unlink(fileName).then(() => {
           resolve(output.toString())
         })
       })

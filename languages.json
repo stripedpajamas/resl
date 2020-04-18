@@ -1,0 +1,12 @@
+{
+  "js": {
+    "extension": "js",
+    "image": "node:12-alpine",
+    "cmd": "node"
+  },
+  "py": {
+    "extension": "py",
+    "image": "python:3.7-slim",
+    "cmd": "python"
+  }
+}

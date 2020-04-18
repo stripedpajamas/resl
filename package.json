@@ -6,6 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "./node_modules/.bin/standard --fix"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stripedpajamas/resl.git"
@@ -24,6 +29,7 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "husky": "^4.2.5",
     "standard": "^14.3.3"
   }
 }
