@@ -24,7 +24,7 @@ fastify.post('/run', async (req, res) => {
 
     await got.post(responseUrl, {
       json: {
-        text: '```' + escapedOutput + '```'
+        text: escapedOutput ? '```' + escapedOutput + '```' : '```[No output]```'
       }
     })
   } catch (e) {
@@ -39,8 +39,12 @@ fastify.post('/done', async (req, res) => {
 })
 
 const parseText = (text) => {
-  const [language, ...codeLines] = text.split('\n')
-  let code = codeLines.join('\n')
+  // [lang]\s[code]
+  const firstBreakIdx = text.split('').findIndex(x => /\s/.test(x))
+  const language = text.slice(0, firstBreakIdx)
+  let code = text.slice(firstBreakIdx + 1)
+
+  // remove possible backticks
   while (code[0] === '`') code = code.slice(1, code.length - 1)
   return { language, code }
 }
