@@ -13,18 +13,22 @@ fastify.get('/', async () => {
 fastify.post('/run', async (req, res) => {
   res.code(200).send({ response_type: 'in_channel' }) // tell Slack we got it
 
-  if (!req.body) return
+  try {
+    if (!req.body) return
 
-  const { text, response_url: responseUrl } = req.body
+    const { text, response_url: responseUrl } = req.body
 
-  const { language, code } = parseText(text)
-  const output = await run(language, code)
+    const { language, code } = parseText(text)
+    const output = await run(language, code)
 
-  got.post(responseUrl, {
-    json: {
-      text: '```' + output + '```'
-    }
-  })
+    await got.post(responseUrl, {
+      json: {
+        text: '```' + output + '```'
+      }
+    })
+  } catch (e) {
+    req.log.error(e)
+  }
 })
 
 // useful for testing
@@ -42,7 +46,8 @@ function parseText (text) {
 
 const start = async () => {
   try {
-    await fastify.listen(3000)
+    const [port, address] = process.argv.slice(2)
+    await fastify.listen(port, address)
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)
