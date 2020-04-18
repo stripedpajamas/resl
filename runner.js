@@ -20,7 +20,7 @@ const buildArgs = (name) => [
   `${name}.js`
 ]
 
-module.exports = function run (code) {
+module.exports = function run (language, code) {
   if (typeof code !== 'string') return ''
   return new Promise((resolve, reject) => {
     const name = ulid.ulid()
