@@ -1,16 +1,19 @@
 {
   "js": {
     "extension": "js",
+    "outputExtensions": ["js"],
     "image": "node:12-alpine",
     "runCmd": "node"
   },
   "py": {
     "extension": "py",
+    "outputExtensions": ["py"],
     "image": "python:3.7-slim",
     "runCmd": "python"
   },
   "ts": {
     "extension": "ts",
+    "outputExtensions": ["ts", "js"],
     "image": "node:12-alpine",
     "installCmd": "npm install -g typescript",
     "compileCmd": "tsc",

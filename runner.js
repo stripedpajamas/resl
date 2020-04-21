@@ -26,14 +26,22 @@ const buildRunCommand = (config, file) => {
   const { runCmd, compileCmd, installCmd } = config
 
   installCmd && cmd.push(installCmd)
-
   compileCmd && cmd.push(`${compileCmd} ${file}`)
+  runCmd && cmd.push(`${runCmd} ${file}`)
 
-  cmd.push(`${runCmd} ${file}`)
+  return cmd.join(' && ')
+}
 
-  const output = cmd.join(' && ')
+const cleanUpFiles = (config, name) => {
+  const deletes = config.outputExtensions.map(ext => (
+    new Promise((resolve, reject) => {
+      fs.unlink(`${name}.${ext}`)
+        .then(() => resolve())
+        .catch(err => reject(err))
+    })
+  ))
 
-  return output
+  return Promise.resolve(deletes)
 }
 
 module.exports = function run (language, code) {
@@ -50,9 +58,11 @@ module.exports = function run (language, code) {
 
       docker.on('error', (err) => { reject(err) })
       docker.on('exit', () => {
-        fs.unlink(fileName).then(() => {
-          resolve(output.toString())
-        })
+        cleanUpFiles(config, name)
+          .then(() => {
+            resolve(output.toString())
+          })
+          .catch(err => reject(err))
       })
     })
   })
