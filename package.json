@@ -8,7 +8,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "./node_modules/.bin/standard --fix"
+      "pre-commit": "./node_modules/.bin/standard"
     }
   },
   "repository": {

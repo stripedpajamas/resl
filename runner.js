@@ -17,12 +17,12 @@ const buildArgs = (config, name, file) => {
     image,
     'sh',
     '-c',
-    buildRunCommand(config, file),
+    buildRunCommand(config, file)
   ]
 }
 
 const buildRunCommand = (config, file) => {
-  const cmd = [];
+  const cmd = []
   const { runCmd, compileCmd, installCmd } = config
 
   installCmd && cmd.push(installCmd)
@@ -30,9 +30,9 @@ const buildRunCommand = (config, file) => {
   compileCmd && cmd.push(`${compileCmd} ${file}`)
 
   cmd.push(`${runCmd} ${file}`)
-  
+
   const output = cmd.join(' && ')
-  
+
   return output
 }
 
