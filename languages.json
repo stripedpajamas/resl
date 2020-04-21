@@ -2,11 +2,18 @@
   "js": {
     "extension": "js",
     "image": "node:12-alpine",
-    "cmd": "node"
+    "runCmd": "node"
   },
   "py": {
     "extension": "py",
     "image": "python:3.7-slim",
-    "cmd": "python"
+    "runCmd": "python"
+  },
+  "ts": {
+    "extension": "ts",
+    "image": "node:12-alpine",
+    "installCmd": "npm install -g typescript",
+    "compileCmd": "tsc",
+    "runCmd": "node"
   }
 }
