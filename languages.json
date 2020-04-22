@@ -3,20 +3,22 @@
     "extension": "js",
     "outputExtensions": ["js"],
     "image": "node:12-alpine",
-    "runCmd": "node"
+    "executeCmd": "node"
   },
   "py": {
     "extension": "py",
     "outputExtensions": ["py"],
     "image": "python:3.7-slim",
-    "runCmd": "python"
+    "executeCmd": "python"
   },
   "ts": {
-    "extension": "ts",
+    "extension": "js",
+    "compileExtension": "ts",
     "outputExtensions": ["ts", "js"],
     "image": "node:12-alpine",
-    "installCmd": "npm install -g typescript",
+    "installCmd": "npm install -g",
+    "packages": ["typescript"],
     "compileCmd": "tsc",
-    "runCmd": "node"
+    "executeCmd": "node"
   }
 }
