@@ -41,9 +41,9 @@ const buildCompileCommand = (config, name) => {
 }
 
 const buildExecuteCommand = (config, name) => {
-  const { executeCmd, extension } = config
-  if (!executeCmd || !extension) return ''
-  return `${executeCmd} ${buildFileName(name, extension)}`
+  const { executeCmd, executeExtension } = config
+  if (!executeCmd || !executeExtension) return ''
+  return `${executeCmd} ${buildFileName(name, executeExtension)}`
 }
 
 const buildFileName = (name, extension) => {
@@ -51,15 +51,11 @@ const buildFileName = (name, extension) => {
 }
 
 const cleanUpFiles = (config, name) => {
-  const deletes = config.outputExtensions.map(ext => (
-    new Promise((resolve, reject) => {
-      fs.unlink(`${name}.${ext}`)
-        .then(() => resolve())
-        .catch(err => reject(err))
-    })
-  ))
+  const deletes = config.outputExtensions.map(ext => {
+    return fs.unlink(buildFileName(name, ext))
+  })
 
-  return Promise.resolve(deletes)
+  return Promise.all(deletes)
 }
 
 module.exports = {

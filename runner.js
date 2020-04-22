@@ -6,13 +6,13 @@ const utils = require('./utils')
 
 module.exports = function run (language, code) {
   const config = languages[language]
-  const { extension, compileExtension } = config
-
   if (typeof code !== 'string' || !config) return ''
+
+  const { executeExtension, compileExtension } = config
 
   return new Promise((resolve, reject) => {
     const name = ulid.ulid()
-    const fileExtension = compileExtension || extension
+    const fileExtension = compileExtension || executeExtension
     const fileName = utils.buildFileName(name, fileExtension)
 
     fs.writeFile(fileName, code).then(() => {
@@ -27,6 +27,7 @@ module.exports = function run (language, code) {
           .catch(() => reject(err))
       })
       docker.on('exit', () => {
+        console.log(output.toString())
         utils.cleanUpFiles(config, name)
           .then(() => resolve(output.toString()))
           .catch(err => reject(err))

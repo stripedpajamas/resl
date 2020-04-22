@@ -1,18 +1,18 @@
 {
   "js": {
-    "extension": "js",
+    "executeExtension": "js",
     "outputExtensions": ["js"],
     "image": "node:12-alpine",
     "executeCmd": "node"
   },
   "py": {
-    "extension": "py",
+    "executeExtension": "py",
     "outputExtensions": ["py"],
     "image": "python:3.7-slim",
     "executeCmd": "python"
   },
   "ts": {
-    "extension": "js",
+    "executeExtension": "js",
     "compileExtension": "ts",
     "outputExtensions": ["ts", "js"],
     "image": "node:12-alpine",
