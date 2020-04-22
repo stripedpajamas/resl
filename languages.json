@@ -19,6 +19,7 @@
     "installCmd": "npm install -g",
     "packages": ["typescript"],
     "compileCmd": "tsc",
-    "executeCmd": "node"
+    "executeCmd": "node",
+    "template": "typescript"
   }
 }

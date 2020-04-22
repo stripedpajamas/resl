@@ -8,6 +8,10 @@ module.exports = function run (language, code) {
   const config = languages[language]
   if (typeof code !== 'string' || !config) return ''
 
+  const codeToRun = config.template
+    ? utils.getTemplate(config.template)(code)
+    : code
+
   const { executeExtension, compileExtension } = config
 
   return new Promise((resolve, reject) => {
@@ -15,7 +19,7 @@ module.exports = function run (language, code) {
     const fileExtension = compileExtension || executeExtension
     const fileName = utils.buildFileName(name, fileExtension)
 
-    fs.writeFile(fileName, code).then(() => {
+    fs.writeFile(fileName, codeToRun).then(() => {
       let output = Buffer.alloc(0)
       const docker = cp.spawn('docker', utils.buildArgs(config, name))
       docker.stdout.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })

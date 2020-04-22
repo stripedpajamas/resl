@@ -58,8 +58,11 @@ const cleanUpFiles = (config, name) => {
   return Promise.all(deletes)
 }
 
+const getTemplate = (templateName) => require(`./templates/${templateName}`)
+
 module.exports = {
   buildArgs,
   buildFileName,
-  cleanUpFiles
+  cleanUpFiles,
+  getTemplate
 }

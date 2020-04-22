@@ -56,7 +56,7 @@ const escapeCodeBlock = (text) => {
 
 const start = async () => {
   try {
-    const [port, address] = process.argv.slice(2)
+    const [port = 3000, address = '127.0.0.1'] = process.argv.slice(2)
     await fastify.listen(port, address)
   } catch (err) {
     fastify.log.error(err)
