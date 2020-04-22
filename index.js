@@ -43,7 +43,7 @@ const parseText = (text) => {
   // [lang]\s[code]
   const firstBreakIdx = text.split('').findIndex(x => /\s/.test(x))
   const language = text.slice(0, firstBreakIdx)
-  let code = text.slice(firstBreakIdx + 1)
+  let code = text.slice(firstBreakIdx + 1).trim()
 
   // remove possible backticks
   while (code[0] === '`') code = code.slice(1, code.length - 1)
