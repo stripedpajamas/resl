@@ -17,7 +17,7 @@ module.exports = function run (language, code) {
 
     fs.writeFile(fileName, code).then(() => {
       let output = Buffer.alloc(0)
-      const docker = cp.spawn('docker', utils.buildArgs(config, name, fileName))
+      const docker = cp.spawn('docker', utils.buildArgs(config, name))
       docker.stdout.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
       docker.stderr.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
 
