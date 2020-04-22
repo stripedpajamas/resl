@@ -1,12 +1,24 @@
 {
   "js": {
-    "extension": "js",
+    "executeExtension": "js",
+    "outputExtensions": ["js"],
     "image": "node:12-alpine",
-    "cmd": "node"
+    "executeCmd": "node"
   },
   "py": {
-    "extension": "py",
+    "executeExtension": "py",
+    "outputExtensions": ["py"],
     "image": "python:3.7-slim",
-    "cmd": "python"
+    "executeCmd": "python"
+  },
+  "ts": {
+    "executeExtension": "js",
+    "compileExtension": "ts",
+    "outputExtensions": ["ts", "js"],
+    "image": "node:12-alpine",
+    "installCmd": "npm install -g",
+    "packages": ["typescript"],
+    "compileCmd": "tsc",
+    "executeCmd": "node"
   }
 }
