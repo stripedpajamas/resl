@@ -8,11 +8,11 @@ module.exports = function run (language, code) {
   const config = languages[language]
   if (typeof code !== 'string' || !config) return ''
 
-  const codeToRun = config.template
-    ? utils.getTemplate(config.template)(code)
-    : code
+  const { executeExtension, compileExtension, template } = config
 
-  const { executeExtension, compileExtension } = config
+  const codeToRun = config.template
+    ? utils.getTemplate(template)(code)
+    : code
 
   return new Promise((resolve, reject) => {
     const name = ulid.ulid()

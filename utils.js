@@ -31,19 +31,19 @@ const buildRunCommand = (config, name) => {
 const buildInstallCommand = (config) => {
   const { installCmd, packages } = config
   if (!installCmd || !packages || !packages.length) return null
-  return [installCmd, ...packages].join(' ')
+  return [installCmd, ...packages, '> /dev/null 2>&1'].join(' ')
 }
 
 const buildCompileCommand = (config, name) => {
   const { compileCmd, compileExtension } = config
   if (!compileCmd || !compileExtension) return null
-  return `${compileCmd} ${buildFileName(name, compileExtension)}`
+  return [compileCmd, buildFileName(name, compileExtension), '> /dev/null 2>&1'].join(' ')
 }
 
 const buildExecuteCommand = (config, name) => {
   const { executeCmd, executeExtension } = config
   if (!executeCmd || !executeExtension) return null
-  return `${executeCmd} ${buildFileName(name, executeExtension)}`
+  return [executeCmd, buildFileName(name, executeExtension)].join(' ')
 }
 
 const buildFileName = (name, extension) => {
