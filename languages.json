@@ -1,25 +1,19 @@
 {
   "js": {
-    "executeExtension": "js",
-    "outputExtensions": ["js"],
+    "fileName": "index.js",
     "image": "node:12-alpine",
-    "executeCmd": "node"
+    "runCmd": "node index.js"
   },
   "py": {
-    "executeExtension": "py",
-    "outputExtensions": ["py"],
+    "fileName": "main.py",
     "image": "python:3.7-slim",
-    "executeCmd": "python"
+    "runCmd": "python main.py"
   },
   "ts": {
-    "executeExtension": "js",
-    "compileExtension": "ts",
-    "outputExtensions": ["ts", "js"],
+    "fileName": "index.ts",
     "image": "node:12-alpine",
-    "installCmd": "npm install -g",
-    "packages": ["typescript"],
-    "compileCmd": "tsc",
-    "executeCmd": "node",
+    "compileCmd": "npm install -g typescript && tsc index.ts",
+    "runCmd": "node index.js",
     "template": "typescript"
   }
 }

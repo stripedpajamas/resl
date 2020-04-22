@@ -13,24 +13,38 @@ fastify.get('/', async () => {
 fastify.post('/run', async (req, res) => {
   res.code(200).send({ response_type: 'in_channel' }) // tell Slack we got it
 
+  if (!req.body) return
+  req.log.info(req.body)
+
+  const { text, response_url: responseUrl } = req.body
+  const { language, code } = parseText(text)
+
+  req.log.info({ language, code })
+
+  let output
   try {
-    if (!req.body) return
-    req.log.info(req.body)
-
-    const { text, response_url: responseUrl } = req.body
-    const { language, code } = parseText(text)
-    const output = await run(language, code)
-    const escapedOutput = escapeCodeBlock(output)
-
+    output = await run(language, code)
+    output = escapeCodeBlock(output)
+  } catch (e) {
+    req.log.error(e)
+    // these errors occur during execution setup;
+    // compile/run errors are stuffed into `output`
     await got.post(responseUrl, {
       json: {
         response_type: 'in_channel',
-        text: escapedOutput ? '```' + escapedOutput + '```' : '```[No output]```'
+        text: 'Sorry! Unable to setup execution environment :('
       }
     })
-  } catch (e) {
-    req.log.error(e)
+    return
   }
+  req.log.info({ output })
+
+  await got.post(responseUrl, {
+    json: {
+      response_type: 'in_channel',
+      text: output ? '```' + output + '```' : '```[No output]```'
+    }
+  })
 })
 
 // useful for testing

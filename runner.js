@@ -1,40 +1,70 @@
 const fs = require('fs').promises
-const cp = require('child_process')
+const path = require('path')
 const ulid = require('ulid')
+const mkdir = require('make-dir')
+const del = require('del')
 const languages = require('./languages')
-const utils = require('./utils')
+const docker = require('./docker')
 
-module.exports = function run (language, code) {
+async function setup (config, code) {
+  const { fileName, template } = config
+
+  const codeToRun = template
+    ? require(`./templates/${template}`)(code)
+    : code
+
+  // create execution directory
+  const executionDirName = ulid.ulid()
+  const executionDir = await mkdir(executionDirName)
+
+  // write source code file into dir
+  await fs.writeFile(path.join(executionDir, fileName), codeToRun)
+
+  return executionDir
+}
+
+async function compile (config, executionDir) {
+  const { image, compileCmd } = config
+
+  if (!compileCmd) return
+  const { output, code } = await docker.runWithArgs(image, executionDir, compileCmd)
+
+  if (code) {
+    throw new Error(output)
+  }
+}
+
+async function run (config, executionDir) {
+  const { image, runCmd } = config
+  const { output, code } = await docker.runWithArgs(image, executionDir, runCmd)
+
+  if (code) {
+    throw new Error(output)
+  }
+
+  return output
+}
+
+async function cleanup (executionDir) {
+  return del(executionDir)
+}
+
+module.exports = async function (language, code) {
   const config = languages[language]
   if (typeof code !== 'string' || !config) return ''
 
-  const { executeExtension, compileExtension, template } = config
+  const executionDir = await setup(config, code)
 
-  const codeToRun = config.template
-    ? utils.getTemplate(template)(code)
-    : code
+  try {
+    await compile(config, executionDir)
+    const output = await run(config, executionDir)
+    await cleanup(executionDir)
 
-  return new Promise((resolve, reject) => {
-    const name = ulid.ulid()
-    const fileExtension = compileExtension || executeExtension
-    const fileName = utils.buildFileName(name, fileExtension)
-
-    fs.writeFile(fileName, codeToRun).then(() => {
-      let output = Buffer.alloc(0)
-      const docker = cp.spawn('docker', utils.buildArgs(config, name))
-      docker.stdout.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
-      docker.stderr.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
-
-      docker.on('error', (err) => {
-        utils.cleanUpFiles(config, name)
-          .then(() => reject(err))
-          .catch(() => reject(err))
-      })
-      docker.on('exit', () => {
-        utils.cleanUpFiles(config, name)
-          .then(() => resolve(output.toString()))
-          .catch(err => reject(err))
-      })
-    })
-  })
+    return output
+  } catch (e) {
+    try {
+      await cleanup(executionDir)
+    } catch (_) {} // don't care if cleanup doesn't work
+    return e.message
+  }
 }
