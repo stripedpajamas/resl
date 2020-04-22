@@ -27,7 +27,6 @@ module.exports = function run (language, code) {
           .catch(() => reject(err))
       })
       docker.on('exit', () => {
-        console.log(output.toString())
         utils.cleanUpFiles(config, name)
           .then(() => resolve(output.toString()))
           .catch(err => reject(err))
