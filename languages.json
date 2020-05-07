@@ -11,8 +11,8 @@
   },
   "ts": {
     "fileName": "index.ts",
-    "image": "node:12-alpine",
-    "compileCmd": "npm install -g typescript && tsc index.ts",
+    "image": "resl-ts:latest",
+    "compileCmd": "tsc index.ts",
     "runCmd": "node index.js",
     "template": "typescript"
   }
