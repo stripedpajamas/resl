@@ -31,4 +31,8 @@ function runWithArgs (image, executionDir, cmd) {
   return runAndCollectOutput('docker', buildDockerRunArgs(image, executionDir, cmd))
 }
 
-module.exports = { runWithArgs }
+function pull (image) {
+  return runAndCollectOutput('docker', ['pull', image])
+}
+
+module.exports = { runWithArgs, pull }

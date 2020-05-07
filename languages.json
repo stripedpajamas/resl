@@ -11,7 +11,7 @@
   },
   "ts": {
     "fileName": "index.ts",
-    "image": "resl-ts:latest",
+    "image": "twoseventythree/resl-ts:1.0",
     "compileCmd": "tsc index.ts",
     "runCmd": "node index.js",
     "template": "typescript"
