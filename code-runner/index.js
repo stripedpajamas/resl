@@ -8,6 +8,13 @@ const getLanguage = (lang) => {
   throw new Error('Unsupported language')
 }
 
+const getLanguageByName = (langName) => {
+  for (const lang of languages) {
+    if (lang.langName === langName) return lang
+  }
+  throw new Error('Unsupported language')
+}
+
 const parseText = (text) => {
   // [lang]\s[code]
   const firstBreakIdx = text.split('').findIndex(x => /\s/.test(x))
@@ -34,4 +41,4 @@ const escapeCodeBlock = (text) => {
   return text.replace('`', '\\`')
 }
 
-module.exports = { run, escapeCodeBlock, parseText, parseCode, getLanguage }
+module.exports = { run, escapeCodeBlock, parseText, parseCode, getLanguage, getLanguageByName }

@@ -57,10 +57,12 @@ fastify.post('/run', async (req, res) => {
 fastify.post('/modal', async (req, res) => {
   req.log.info(req.body)
 
-  const { type, view } = req.body
-  if (type !== 'view_submission' || !view) {
+  const { type, view, response_urls: responseUrls } = req.body
+  if (type !== 'view_submission' || !view || !responseUrls || !responseUrls.length) {
     return
   }
+
+  const { response_url: responseUrl } = responseUrls.pop()
 
   req.log.info(view)
   const { state = {}, private_metadata: langName } = view
@@ -73,21 +75,36 @@ fastify.post('/modal', async (req, res) => {
       response_action: 'errors',
       errors: { main_block: 'Code is required to run' }
     })
+    return
   }
 
   let code, language
   try {
     code = codeRunner.parseCode(rawCode)
-    language = codeRunner.getLanguage(langName)
+    language = codeRunner.getLanguageByName(langName)
   } catch (e) {
     req.log.error(e)
-    res.status(200).send({ response_action: 'clear' }) // this closes the modal
+    res.status(500).send()
+    return
   }
 
-  if (code && language) {
-    res.status(200).send({ response_action: 'clear' }) // this closes the modal
-    req.log.info('code: %O; language: %O', code, language)
+  res.status(200).send({ response_action: 'clear' }) // this closes the modal
+
+  let output
+  try {
+    output = await codeRunner.run(language, code)
+    output = codeRunner.escapeCodeBlock(output)
+  } catch (e) {
+    req.log.error(e)
+    // these errors occur during execution setup; compile/run errors are stuffed into `output`
+    const slackRes = await slack.sendChannelResponse({ responseUrl, text: 'Sorry! Unable to setup execution environment :(' })
+    req.log.info(slackRes, 'Slack channel response')
+    return
   }
+  req.log.info({ output })
+
+  const slackRes = await slack.sendChannelResponse({ responseUrl, text: output ? '```' + output + '```' : '```[No output]```' })
+  req.log.info(slackRes, 'Slack channel response')
 })
 
 // useful for testing
