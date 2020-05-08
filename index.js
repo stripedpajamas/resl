@@ -24,12 +24,15 @@ fastify.post('/run', async (req, res) => {
   try {
     ({ language, code } = codeRunner.parseText(text))
   } catch (e) {
+    req.log.error(e)
     res.code(200).send({ text: e.message })
+    return
   }
 
   if (!code) { // provide modal for them to fill in code
-    res.code(200).send({}) // private acknowledgement to Slack
-    slack.sendModal({ triggerId, language })
+    res.code(200).send() // private acknowledgement to Slack
+    const slackRes = await slack.sendModal({ triggerId, language })
+    req.log.info(slackRes, 'Slack modal response')
     return
   }
 
