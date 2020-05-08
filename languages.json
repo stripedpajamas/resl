@@ -18,9 +18,8 @@
   },
   "java": {
     "fileName": "Main.java",
-    "image": "openjdk:8",
-    "compileCmd": "javac Main.java",
-    "runCmd": "java Main"
+    "image": "openjdk:11",
+    "runCmd": "cat Main.java | jshell -"
   },
   "clj": {
     "fileName": "main.clj",
