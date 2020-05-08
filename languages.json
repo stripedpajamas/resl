@@ -15,5 +15,11 @@
     "compileCmd": "tsc index.ts",
     "runCmd": "node index.js",
     "template": "typescript"
+  },
+  "java": {
+    "fileName": "Main.java",
+    "image": "openjdk:8",
+    "compileCmd": "javac Main.java",
+    "runCmd": "java Main"
   }
 }
