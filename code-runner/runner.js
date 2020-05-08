@@ -4,7 +4,6 @@ const ulid = require('ulid')
 const mkdir = require('make-dir')
 const del = require('del')
 const docker = require('./docker')
-const languages = require('./languages.json')
 
 async function setup (config, code) {
   const { fileName, template } = config
@@ -49,15 +48,14 @@ async function cleanup (executionDir) {
   return del(executionDir)
 }
 
-module.exports = async function (language, code) {
-  const config = languages[language]
-  if (typeof code !== 'string' || !config) return ''
+module.exports = async function (languageConfig, code) {
+  if (typeof code !== 'string' || !languageConfig) return ''
 
-  const { name, executionDir } = await setup(config, code)
+  const { name, executionDir } = await setup(languageConfig, code)
 
   try {
-    await compile(config, name, executionDir)
-    const output = await run(config, name, executionDir)
+    await compile(languageConfig, name, executionDir)
+    const output = await run(languageConfig, name, executionDir)
     await cleanup(executionDir)
 
     return output
