@@ -55,10 +55,11 @@ fastify.post('/run', async (req, res) => {
 })
 
 fastify.post('/modal', async (req, res) => {
-  req.log.info(req.body)
+  const payload = JSON.parse(req.body.payload || '{}')
 
-  const { type, view, response_urls: responseUrls } = req.body
+  const { type, view, response_urls: responseUrls } = payload
   if (type !== 'view_submission' || !view || !responseUrls || !responseUrls.length) {
+    res.status(400).send()
     return
   }
 
@@ -68,7 +69,8 @@ fastify.post('/modal', async (req, res) => {
   const { state = {}, private_metadata: langName } = view
   const { values = {} } = state
   const { main_block: mainBlock = {} } = values
-  const { code_input: rawCode = '' } = mainBlock
+  const { code_input: codeInput = {} } = mainBlock
+  const { value: rawCode } = codeInput
 
   if (!rawCode || !langName) {
     res.status(200).send({

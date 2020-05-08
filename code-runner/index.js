@@ -9,8 +9,8 @@ const getLanguage = (lang) => {
 }
 
 const getLanguageByName = (langName) => {
-  for (const lang of languages) {
-    if (lang.langName === langName) return lang
+  for (const lang in languages) {
+    if (languages[lang].langName === langName) return languages[lang]
   }
   throw new Error('Unsupported language')
 }
