@@ -57,12 +57,12 @@ fastify.post('/run', async (req, res) => {
 fastify.post('/modal', async (req, res) => {
   const payload = JSON.parse(req.body.payload || '{}')
 
-  const { type, view, response_urls: responseUrls } = payload
-  if (type !== 'view_submission' || !view || !responseUrls || !responseUrls.length) {
+  const { type, view, response_urls: responseUrls, user } = payload
+  if (type !== 'view_submission' || !view || !responseUrls || !responseUrls.length || !user) {
     res.status(400).send()
     return
   }
-
+  const { id: userId } = user
   const { response_url: responseUrl } = responseUrls.pop()
 
   req.log.info(view)
@@ -105,7 +105,10 @@ fastify.post('/modal', async (req, res) => {
   }
   req.log.info({ output })
 
-  const slackRes = await slack.sendChannelResponse({ responseUrl, text: output ? '```' + output + '```' : '```[No output]```' })
+  const tripleBackticks = '```' // including their code in the response text
+  const text = `<@${userId}>\n${tripleBackticks}${code}${tripleBackticks}\n${tripleBackticks}${output || '[No output]'}${tripleBackticks}`
+
+  const slackRes = await slack.sendChannelResponse({ responseUrl, text })
   req.log.info(slackRes, 'Slack channel response')
 })
 
