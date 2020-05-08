@@ -1,8 +1,8 @@
 // prime the docker images and then start the web server
 
 const server = require('.')
-const docker = require('./docker')
-const languageDefs = require('./languages.json')
+const docker = require('./code-runner/docker')
+const languageDefs = require('./code-runner/languages.json')
 
 async function main () {
   if (process.argv[4] !== 'nopull') {

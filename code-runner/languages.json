@@ -20,7 +20,7 @@
     "fileName": "Main.java",
     "image": "openjdk:11",
     "compileCmd": "",
-    "runCmd": "echo 'System.out.println(\"\");' | jshell - > /dev/null 2>&1 && cat Main.java | jshell -"
+    "runCmd": "echo '/exit' | jshell - > /dev/null 2>&1 && cat Main.java | jshell -"
   },
   "clj": {
     "fileName": "main.clj",

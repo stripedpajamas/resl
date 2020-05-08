@@ -4,6 +4,8 @@ const buildDockerRunArgs = (image, executionDir, cmd) => {
   return [
     'run',
     '--rm', // delete after running
+    '--stop-timeout', // stop the container after
+    '10', // 10 seconds
     '-v', // mount the following path
     `${executionDir}:/usr/src/app`, // host_path:container_path
     '-w', // set the container's working directory to the following path
@@ -19,10 +21,11 @@ function runAndCollectOutput (cmd, args) {
   return new Promise((resolve, reject) => {
     let output = Buffer.alloc(0)
     const child = cp.spawn(cmd, args)
+
     child.stdout.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
     child.stderr.on('data', (chunk) => { output = Buffer.concat([output, chunk]) })
 
-    child.on('error', reject) // error event is emitted when child could not be spawned
+    child.on('error', (e) => reject(e)) // error event is emitted when child could not be spawned
     child.on('exit', (code) => resolve({ output: output.toString(), code }))
   })
 }

@@ -3,8 +3,8 @@ const path = require('path')
 const ulid = require('ulid')
 const mkdir = require('make-dir')
 const del = require('del')
-const languages = require('./languages')
 const docker = require('./docker')
+const languages = require('./languages.json')
 
 async function setup (config, code) {
   const { fileName, template } = config
