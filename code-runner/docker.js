@@ -6,6 +6,8 @@ const buildDockerRunArgs = (image, name, executionDir, cmd) => {
     '--rm', // delete after running
     '--name', // name the container for easier manual deletion, if necessary
     name,
+    '--network', // use the following network setting for the container
+    'none', // no networking
     '-v', // mount the following path
     `${executionDir}:/usr/src/app`, // host_path:container_path
     '-w', // set the container's working directory to the following path
