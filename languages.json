@@ -21,5 +21,10 @@
     "image": "openjdk:8",
     "compileCmd": "javac Main.java",
     "runCmd": "java Main"
+  },
+  "clj": {
+    "fileName": "main.clj",
+    "image": "clojure:tools-deps-alpine",
+    "runCmd": "clojure main.clj"
   }
 }
