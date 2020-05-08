@@ -16,10 +16,11 @@ async function sendChannelResponse ({ responseUrl, text }) {
 }
 
 async function sendModal ({ triggerId, language }) {
+  const { langName, placeholder } = language
   const body = await got.post(VIEWS_OPEN_URL, {
     json: {
-      triggerId,
-      view: getModal(language.name, language.placeholder)
+      trigger_id: triggerId,
+      view: getModal(langName, placeholder)
     },
     headers: {
       authorization: `Bearer ${TOKEN}`

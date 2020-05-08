@@ -16,15 +16,22 @@ const parseText = (text) => {
   }
 
   const language = getLanguage(text.slice(0, firstBreakIdx))
-  let code = text.slice(firstBreakIdx + 1).trim()
+  const code = parseCode(text.slice(firstBreakIdx + 1).trim())
 
-  // remove possible backticks
-  while (code[0] === '`') code = code.slice(1, code.length - 1)
   return { language, code }
+}
+
+const parseCode = (text) => {
+  // remove possible backticks
+  let code = text
+  while (code[0] === '`') {
+    code = code.slice(1, code.length - 1)
+  }
+  return code
 }
 
 const escapeCodeBlock = (text) => {
   return text.replace('`', '\\`')
 }
 
-module.exports = { run, escapeCodeBlock, parseText }
+module.exports = { run, escapeCodeBlock, parseText, parseCode, getLanguage }
