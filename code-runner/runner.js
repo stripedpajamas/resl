@@ -20,23 +20,23 @@ async function setup (config, code) {
   // write source code file into dir
   await fs.writeFile(path.join(executionDir, fileName), codeToRun)
 
-  return executionDir
+  return { name: executionDirName, executionDir }
 }
 
-async function compile (config, executionDir) {
+async function compile (config, name, executionDir) {
   const { image, compileCmd } = config
 
   if (!compileCmd) return
-  const { output, code } = await docker.runWithArgs(image, executionDir, compileCmd)
+  const { output, code } = await docker.runWithArgs(image, name, executionDir, compileCmd)
 
   if (code) {
     throw new Error(output)
   }
 }
 
-async function run (config, executionDir) {
+async function run (config, name, executionDir) {
   const { image, runCmd } = config
-  const { output, code } = await docker.runWithArgs(image, executionDir, runCmd)
+  const { output, code } = await docker.runWithArgs(image, name, executionDir, runCmd)
 
   if (code) {
     throw new Error(output)
@@ -53,11 +53,11 @@ module.exports = async function (language, code) {
   const config = languages[language]
   if (typeof code !== 'string' || !config) return ''
 
-  const executionDir = await setup(config, code)
+  const { name, executionDir } = await setup(config, code)
 
   try {
-    await compile(config, executionDir)
-    const output = await run(config, executionDir)
+    await compile(config, name, executionDir)
+    const output = await run(config, name, executionDir)
     await cleanup(executionDir)
 
     return output
