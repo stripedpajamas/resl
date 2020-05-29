@@ -1,6 +1,8 @@
 // prime the docker images and then start the web server
 
 const server = require('.')
+const codeRunner = require('./code-runner')
+const slack = require('./slack')
 const docker = require('./code-runner/docker')
 const languageDefs = require('./code-runner/languages.json')
 
@@ -21,7 +23,7 @@ async function main () {
     console.log('\n\nStarting web server...')
   }
 
-  server.start()
+  server.start({ codeRunner, slack })
 }
 
 main()

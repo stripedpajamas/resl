@@ -29,8 +29,11 @@ const parseText = (text) => {
 }
 
 const parseCode = (text) => {
-  // remove possible backticks
+  // remove possible backticks and unescape html sequences
   let code = text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
   while (code[0] === '`') {
     code = code.slice(1, code.length - 1)
   }

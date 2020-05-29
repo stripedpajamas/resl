@@ -10,7 +10,7 @@ async function sendChannelResponse ({ responseUrl, text }) {
       response_type: 'in_channel',
       text
     }
-  }).json()
+  })
 
   return body
 }
@@ -25,7 +25,7 @@ async function sendModal ({ triggerId, language }) {
     headers: {
       authorization: `Bearer ${TOKEN}`
     }
-  }).json()
+  })
 
   return body
 }

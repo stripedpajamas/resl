@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node start.js",
     "dev": "node start.js 3000 127.0.0.1 nopull | pino-pretty",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava"
   },
   "husky": {
     "hooks": {
@@ -33,8 +33,10 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "ava": "^3.8.2",
     "husky": "^4.2.5",
     "pino-pretty": "^4.0.0",
+    "sinon": "^9.0.2",
     "standard": "^14.3.3"
   }
 }
