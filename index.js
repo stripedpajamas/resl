@@ -1,23 +1,32 @@
 const Fastify = require('fastify')
+const qs = require('qs')
 
 function buildServer ({ codeRunner, slack, logger = true }) {
   const fastify = Fastify({ logger })
   fastify.register(require('fastify-helmet'))
-  fastify.register(require('fastify-formbody'))
+  fastify.addContentTypeParser(
+    'application/x-www-form-urlencoded',
+    { parseAs: 'buffer' },
+    (_, body, done) => {
+      const bodyString = body.toString()
+      done(null, { parsed: qs.parse(bodyString), raw: bodyString })
+    }
+  )
 
   fastify.get('/', async () => {
     return { hello: 'world' }
   })
 
-  fastify.post('/run', async (req, res) => {
-    if (!req.body) return res.code(400).send()
-    req.log.info(req.body)
+  fastify.post('/run', { preHandler: slack.verifyRequest }, async (req, res) => {
+    if (!req.body || !req.body.parsed || !req.body.raw) return res.code(400).send()
+    const body = req.body.parsed
+    req.log.info(body)
 
     const {
       trigger_id: triggerId,
       text,
       response_url: responseUrl
-    } = req.body
+    } = body
 
     let language, code
     try {
@@ -53,8 +62,9 @@ function buildServer ({ codeRunner, slack, logger = true }) {
     req.log.info(slackRes, 'Slack channel response')
   })
 
-  fastify.post('/modal', async (req, res) => {
-    const payload = JSON.parse(req.body.payload || '{}')
+  fastify.post('/modal', { preHandler: slack.verifyRequest }, async (req, res) => {
+    const { parsed } = req.body
+    const payload = JSON.parse(parsed.payload || '{}')
 
     const { type, view, response_urls: responseUrls, user } = payload
     if (type !== 'view_submission' || !view || !responseUrls || !responseUrls.length || !user) {

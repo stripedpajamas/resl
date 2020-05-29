@@ -1,5 +1,6 @@
 const test = require('ava')
 const sinon = require('sinon')
+const qs = require('qs')
 const slack = require('../slack')
 const codeRunner = require('../code-runner')
 const { buildServer } = require('../')
@@ -37,6 +38,8 @@ function buildModalPayload (rawCode, langName) {
 test.beforeEach((t) => {
   const mockedCodeRunner = { ...codeRunner, run: sinon.stub() }
   const mockedSlack = sinon.stub({ ...slack })
+  mockedSlack.verifyRequest.callsArg(2) // calls done()
+
   t.context.server = buildServer({ codeRunner: mockedCodeRunner, slack: mockedSlack, logger: false })
 
   t.context.slack = mockedSlack
@@ -58,7 +61,8 @@ test('POST `/run` 400 empty body', async (t) => {
   const { server } = t.context
   const res = await server.inject({
     method: 'POST',
-    url: '/run'
+    url: '/run',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' }
   })
   t.is(res.statusCode, 400)
 })
@@ -68,11 +72,12 @@ test('POST `/run` 200 unsupported/empty language', async (t) => {
   const res = await server.inject({
     method: 'POST',
     url: '/run',
-    payload: {
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: qs.stringify({
       trigger_id: 'triggerId',
       text: '',
       response_url: 'responseUrl'
-    }
+    })
   })
 
   t.is(res.statusCode, 200)
@@ -84,11 +89,12 @@ test('POST `/run` 200 no code means modal', async (t) => {
   const res = await server.inject({
     method: 'POST',
     url: '/run',
-    payload: {
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: qs.stringify({
       trigger_id: 'triggerId',
       text: 'js',
       response_url: 'responseUrl'
-    }
+    })
   })
 
   t.is(res.statusCode, 200)
@@ -107,11 +113,12 @@ test('POST `/run` 200 run failure', async (t) => {
   const res = await server.inject({
     method: 'POST',
     url: '/run',
-    payload: {
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: qs.stringify({
       trigger_id: 'triggerId',
       text: 'js `console.log("hi")`',
       response_url: 'responseUrl'
-    }
+    })
   })
 
   t.is(res.statusCode, 200)
@@ -164,11 +171,12 @@ test('POST `/run` 200 code will run', async (t) => {
     const res = await server.inject({
       method: 'POST',
       url: '/run',
-      payload: {
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      payload: qs.stringify({
         trigger_id: 'triggerId',
         text: slackifyText(text),
         response_url: 'responseUrl'
-      }
+      })
     })
 
     t.is(res.statusCode, 200)
@@ -199,6 +207,7 @@ test('POST `/modal` 400 bad input', async (t) => {
     const res = await server.inject({
       method: 'POST',
       url: '/modal',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
       payload
     })
     t.is(res.statusCode, 400)
@@ -211,7 +220,8 @@ test('POST `/modal` 200 no code', async (t) => {
   const res = await server.inject({
     method: 'POST',
     url: '/modal',
-    payload: { payload: buildModalPayload('', 'JavaScript') }
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: qs.stringify({ payload: buildModalPayload('', 'JavaScript') })
   })
 
   t.is(res.statusCode, 200)
@@ -227,7 +237,8 @@ test('POST `/modal` 200 no lang', async (t) => {
   const res = await server.inject({
     method: 'POST',
     url: '/modal',
-    payload: { payload: buildModalPayload('code is here', '') }
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: qs.stringify({ payload: buildModalPayload('code is here', '') })
   })
 
   t.is(res.statusCode, 200)
@@ -243,7 +254,8 @@ test('POST `/modal` 200 cannot parse code or lang', async (t) => {
   const res = await server.inject({
     method: 'POST',
     url: '/modal',
-    payload: { payload: buildModalPayload('good code', 'bad lang') }
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: qs.stringify({ payload: buildModalPayload('good code', 'bad lang') })
   })
 
   t.is(res.statusCode, 500)
@@ -257,7 +269,8 @@ test('POST `/modal` 200 run failure', async (t) => {
   const res = await server.inject({
     method: 'POST',
     url: '/modal',
-    payload: { payload: buildModalPayload('hello', 'JavaScript') }
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    payload: qs.stringify({ payload: buildModalPayload('hello', 'JavaScript') })
   })
 
   t.is(res.statusCode, 200)
@@ -298,7 +311,8 @@ test('POST `/modal` 200 will run code', async (t) => {
     const res = await server.inject({
       method: 'POST',
       url: '/modal',
-      payload: { payload: buildModalPayload(code, langName) }
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      payload: qs.stringify({ payload: buildModalPayload(code, langName) })
     })
 
     t.is(res.statusCode, 200)
