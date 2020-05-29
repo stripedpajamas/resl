@@ -12,12 +12,13 @@ test('verify request', (t) => {
   const timestamp = 1531420618
 
   const req = {
+    log: { warn: sinon.stub() },
     body: {
       raw: testBody
     },
     headers: {
-      'X-Slack-Request-Timestamp': timestamp,
-      'X-Slack-Signature': 'v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503'
+      'x-slack-request-timestamp': `${timestamp}`,
+      'x-slack-signature': 'v0=a2114d57b48eac39b9ad189dd8316235a7b4a8d21a10bd27519666489c69b503'
     }
   }
   const res = {

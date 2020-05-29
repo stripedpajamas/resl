@@ -9,10 +9,11 @@ function verifyRequest (req, res, done) {
   const { SIGNING_SECRET } = process.env
   const { body, headers } = req
   const { raw: rawBody } = body
-  const { 'X-Slack-Request-Timestamp': timestamp, 'X-Slack-Signature': sig } = headers
+  const { 'x-slack-request-timestamp': timestamp, 'x-slack-signature': sig } = headers
 
   if (Math.abs((Date.now() / 1000) - timestamp) > 60 * 5) {
     // if request is not dated within 5 mins (past or future) reject it
+    req.log.warn(`Invalid timestamp: ${timestamp}`)
     return res.code(401).send()
   }
 
@@ -22,6 +23,7 @@ function verifyRequest (req, res, done) {
     .digest('hex')
 
   if (`v0=${hash}` !== sig) {
+    req.log.warn('Invalid signature. Wanted %s but got %s', hash, sig)
     return res.code(401).send()
   }
 
