@@ -27,6 +27,6 @@ chown -R ubuntu:ubuntu /srv/resl
 su - ubuntu
 cd /srv/resl
 npm install
-pm2 start start.js
+HOME=/home/ubuntu pm2 start start.js
 env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
 
