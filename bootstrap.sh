@@ -24,6 +24,6 @@ git clone https://github.com/stripedpajamas/resl.git /srv/resl
 cd /srv/resl
 npm install
 pm2 start start.js
-env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u root --hp /root
+env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u root --hp /etc
 pm2 save
 
