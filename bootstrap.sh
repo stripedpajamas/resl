@@ -13,7 +13,7 @@ sudo usermod -aG docker ubuntu
 # node
 wget https://nodejs.org/dist/v12.18.3/node-v12.18.3-linux-x64.tar.gz
 tar -xvf node-v12.8.3-linux-x64.tar.gz
-cd node-v12.8.3-linux-x64
+cd node-v12.18.3-linux-x64
 sudo cp * /usr/local/ -r
 
 # pm2
