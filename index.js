@@ -133,7 +133,7 @@ function buildServer ({ codeRunner, slack, logger = true }) {
 const start = async (deps) => {
   const server = buildServer(deps)
   try {
-    const [port = 3000, address = '127.0.0.1'] = process.argv.slice(2)
+    const [port = 3000, address = '0.0.0.0'] = process.argv.slice(2)
     await server.listen(port, address)
   } catch (err) {
     server.log.error(err)
