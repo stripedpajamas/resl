@@ -22,11 +22,9 @@ npm install -g pm2
 # resl
 mkdir -p /srv/resl
 git clone https://github.com/stripedpajamas/resl.git /srv/resl
-chown -R ubuntu:ubuntu /srv/resl
-
-su - ubuntu
 cd /srv/resl
 npm install
-HOME=/home/ubuntu pm2 start start.js
-sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+HOME=/srv/resl pm2 start start.js
+env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /srv/resl
+chown -R ubuntu:ubuntu /srv/resl
 
