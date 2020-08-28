@@ -24,7 +24,7 @@ mkdir -p /srv/resl
 git clone https://github.com/stripedpajamas/resl.git /srv/resl
 pushd /srv/resl
 npm install
-pm2 start start.js
+HOME=/home/ubuntu pm2 start start.js
 env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
 popd
 
