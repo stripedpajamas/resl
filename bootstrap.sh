@@ -27,7 +27,11 @@ chown -R ubuntu:ubuntu /srv/resl
 su - ubuntu
 cd /srv/resl
 npm install
+
+mkdir -p /home/ubuntu/.pm2
+chown -R ubuntu:ubuntu /home/ubuntu/.pm2
+
 HOME=/home/ubuntu pm2 start start.js
 sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-pm2 save
+HOME=/home/ubuntu pm2 save
 
