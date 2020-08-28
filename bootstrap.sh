@@ -8,7 +8,6 @@ cd /tmp
 # docker
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
-usermod -aG docker ubuntu
 
 # node
 wget https://nodejs.org/dist/v12.18.3/node-v12.18.3-linux-x64.tar.gz
@@ -22,16 +21,9 @@ npm install -g pm2
 # resl
 mkdir -p /srv/resl
 git clone https://github.com/stripedpajamas/resl.git /srv/resl
-chown -R ubuntu:ubuntu /srv/resl
-
-su - ubuntu
 cd /srv/resl
 npm install
-
-mkdir -p /home/ubuntu/.pm2
-chown -R ubuntu:ubuntu /home/ubuntu/.pm2
-
-HOME=/home/ubuntu pm2 start start.js
-sudo env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-HOME=/home/ubuntu pm2 save
+pm2 start start.js
+env PATH=$PATH:/usr/local/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u root --hp /root
+pm2 save
 
