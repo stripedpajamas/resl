@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: AWS API Gateway with a Lambda Integration
 
+Parameters:
+  ImageUri:
+    Type: String
+
 Resources:
   ReslRunApiFunction:
     Type: AWS::Serverless::Function
@@ -18,6 +22,14 @@ Resources:
           Type: HttpApi
           Path: /run
           Method: POST
+
+  ReslLangLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: the resl lang lambda
+      FunctionName: 'resl-lang'
+      PackageType: Image
+      ImageUri: !Ref ImageUri
 
   ReslLambdaIamRole:
     Type: AWS::IAM::Role
