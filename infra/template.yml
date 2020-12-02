@@ -86,13 +86,19 @@ Resources:
               - Effect: Allow
                 Action: cloudformation:*
                 Resource: "*"
+        - PolicyName: APIGatewayAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: apigateway:*
+                Resource: "*"
         - PolicyName: IamAccess
           PolicyDocument:
             Statement:
               - Effect: Allow
                 Action: iam:*
                 Resource: "*"
-        - PolicyName: LambdaAccessOnOurProjectOnly
+        - PolicyName: LambdaAccess
           PolicyDocument:
             Statement:
               - Effect: Allow
