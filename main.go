@@ -7,20 +7,21 @@ import (
         "github.com/aws/aws-lambda-go/events"
 )
 
-type MyEvent struct {
-        Name string `json:"name"`
-}
+func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+    fmt.Printf("Processing request data for request %s.\n", request.RequestContext.RequestId)
+    fmt.Printf("Body size = %d.\n", len(request.Body))
 
-func HandleRequest(ctx context.Context, name MyEvent) (events.APIGatewayProxyResponse, error) {
-        return events.APIGatewayProxyResponse {
-                Body: fmt.Sprintf("Hello %s!", name.Name ),
-                StatusCode: 200,
-                Headers: make(map[string]string),
-                MultiValueHeaders: make(map[string][]string),
-                IsBase64Encoded: false,
-        }, nil
+    fmt.Println("Headers:")
+    for key, value := range request.Headers {
+        fmt.Printf("    %s: %s\n", key, value)
+    }
+
+    return events.APIGatewayProxyResponse {
+            Body: request.Body,
+            StatusCode: 200
+    }, nil
 }
 
 func main() {
-        lambda.Start(HandleRequest)
+        lambda.Start(handleRequest)
 }
