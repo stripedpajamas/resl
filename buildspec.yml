@@ -27,6 +27,6 @@ phases:
       - |
         aws cloudformation deploy \
           --stack-name $PROJECT_NAME \
-          --template-file template.yml \
+          --template-file outputtemplate.yml \
           --parameter-overrides ImageUri=${IMAGE_URI} \
           --capabilities CAPABILITY_IAM
