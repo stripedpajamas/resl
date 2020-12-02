@@ -14,14 +14,14 @@ Resources:
           - EDGE
       Name: resl-edge-api
 
-  ApiGatewayResource:
+  ReslRunApiGatewayResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
-      PathPart: 'lambda'
+      PathPart: 'run'
       RestApiId: !Ref ApiGatewayRestApi
 
-  ApiGatewayMethod:
+  ReslRunApiGatewayMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       ApiKeyRequired: false
@@ -36,7 +36,7 @@ Resources:
         Type: AWS_PROXY
         Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReslRunFunction.Arn}/invocations'
       OperationName: 'resl-run'
-      ResourceId: !Ref ApiGatewayResource
+      ResourceId: !Ref ReslRunApiGatewayResource
       RestApiId: !Ref ApiGatewayRestApi
 
   ApiGatewayModel:
@@ -56,7 +56,7 @@ Resources:
 
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
-    DependsOn: ApiGatewayMethod
+    DependsOn: ReslRunApiGatewayMethod
     Properties:
       Description: RESL API Deployment
       RestApiId: !Ref ApiGatewayRestApi
