@@ -4,62 +4,54 @@ Description: AWS API Gateway with a Lambda Integration
 
 Resources:
 
-  ApiGatewayRestApi:
-    Type: AWS::ApiGateway::RestApi
+  ApiGatewayHTTPApi:
+    Type: AWS::ApiGatewayV2::Api
     Properties:
-      ApiKeySourceType: HEADER
       Description: n/a don't ask
+      ProtocolType: HTTP
       EndpointConfiguration:
         Types:
           - EDGE
       Name: resl-edge-api
 
-  ReslRunApiGatewayResource:
-    Type: AWS::ApiGateway::Resource
+  ApiGatewayStage:
+    Type: AWS::ApiGatewayV2::Stage
     Properties:
-      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
-      PathPart: 'run'
-      RestApiId: !Ref ApiGatewayRestApi
+      Description: RESL API Stage v0
+      ApiId: !Ref ApiGatewayHTTPApi
+      StageName: 'v0'
+      AutoDeploy: true
 
-  ReslRunApiGatewayMethod:
-    Type: AWS::ApiGateway::Method
+  ReslRunRoute:
+    Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiKeyRequired: false
       AuthorizationType: NONE
-      HttpMethod: POST
-      Integration:
-        ConnectionType: INTERNET
-        Credentials: !GetAtt ApiGatewayIamRole.Arn
-        IntegrationHttpMethod: POST
-        PassthroughBehavior: WHEN_NO_MATCH
-        TimeoutInMillis: 29000
-        Type: AWS_PROXY
-        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReslRunFunction.Arn}/invocations'
-      OperationName: 'resl-run'
-      ResourceId: !Ref ReslRunApiGatewayResource
-      RestApiId: !Ref ApiGatewayRestApi
+      ApiId: !Ref ApiGatewayHTTPApi
+      RouteKey: 'POST /run'
+      Target: !Join
+        - /
+        - - integrations
+        - !Ref ReslRunLambdaIntegration
 
-  ApiGatewayModel:
-    Type: AWS::ApiGateway::Model
+  ReslRunLambdaIntegration:
+    Type: 'AWS::ApiGatewayV2::Integration'
     Properties:
-      ContentType: 'application/json'
-      RestApiId: !Ref ApiGatewayRestApi
-      Schema: {}
-
-  ApiGatewayStage:
-    Type: AWS::ApiGateway::Stage
-    Properties:
-      DeploymentId: !Ref ApiGatewayDeployment
-      Description: RESL API Stage v0
-      RestApiId: !Ref ApiGatewayRestApi
-      StageName: 'v0'
-
-  ApiGatewayDeployment:
-    Type: AWS::ApiGateway::Deployment
-    DependsOn: ReslRunApiGatewayMethod
-    Properties:
-      Description: RESL API Deployment
-      RestApiId: !Ref ApiGatewayRestApi
+      ApiId: !Ref ApiGatewayHTTPApi
+      Description: RESL run lambda
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':apigateway:'
+          - !Ref 'AWS::Region'
+          - ':lambda:path/2015-03-31/functions/'
+          - !Ref ReslRunFunction
+          - /invocations
+      CredentialsArn: !GetAtt ApiGatewayIamRole.Arn
+      IntegrationMethod: POST
+      ConnectionType: INTERNET
 
   ApiGatewayIamRole:
     Type: AWS::IAM::Role
