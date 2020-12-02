@@ -85,7 +85,7 @@ Resources:
                 Resource: !GetAtt ReslRunFunction.Arn
 
   ReslRunFunction:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
       Description: the resl edge func
       FunctionName: 'resl-run'
