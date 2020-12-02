@@ -85,13 +85,13 @@ Resources:
                 Resource: !GetAtt ReslRunFunction.Arn
 
   ReslRunFunction:
-    Type: AWS::Serverless::Function
+    Type: AWS::Lambda::Function
     Properties:
       Description: the resl edge func
       FunctionName: 'resl-run'
       Handler: main
       Role: !GetAtt ReslLambdaIamRole.Arn
-      CodeUri: ./
+      Code: ./
       Runtime: go1.x
       Timeout: 29
 
