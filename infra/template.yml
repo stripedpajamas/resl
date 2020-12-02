@@ -65,13 +65,13 @@ Resources:
             Service: codebuild.amazonaws.com
           Action: sts:AssumeRole
       Policies:
-        - PolicyName: LogsAccessOnOurProjectOnly
+        - PolicyName: LogsAccess
           PolicyDocument:
             Statement:
               - Effect: Allow
                 Action: logs:*
-                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${ProjectName}:*
-        - PolicyName: EcrAccessOnOurRepositoryOnly
+                Resource: "*"
+        - PolicyName: EcrAccess
           PolicyDocument:
             Statement:
               - Effect: Allow
@@ -80,26 +80,24 @@ Resources:
               - Effect: Allow
                 Action: ecr:*
                 Resource: !GetAtt EcrRepository.Arn
-        - PolicyName: CloudFormationAccessOnOurProjectOnly
+        - PolicyName: CloudFormationAccess
           PolicyDocument:
             Statement:
               - Effect: Allow
                 Action: cloudformation:*
-                Resource:
-                  - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${ProjectName}/*
-                  - !Sub arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31
-        - PolicyName: IamAccessOnOurProjectOnly
+                Resource: "*"
+        - PolicyName: IamAccess
           PolicyDocument:
             Statement:
               - Effect: Allow
                 Action: iam:*
-                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/${ProjectName}-*
+                Resource: "*"
         - PolicyName: LambdaAccessOnOurProjectOnly
           PolicyDocument:
             Statement:
               - Effect: Allow
                 Action: lambda:*
-                Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectName}-*
+                Resource: "*"
         - PolicyName: S3AccessOnEverything
           PolicyDocument:
             Statement:
