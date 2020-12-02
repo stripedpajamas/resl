@@ -37,15 +37,7 @@ Resources:
       ApiId: !Ref ApiGatewayHTTPApi
       Description: RESL run lambda
       IntegrationType: AWS_PROXY
-      IntegrationUri: !Join
-        - ''
-        - - 'arn:'
-          - !Ref 'AWS::Partition'
-          - ':apigateway:'
-          - !Ref 'AWS::Region'
-          - ':lambda:path/2015-03-31/functions/'
-          - !Ref ReslRunFunction
-          - /invocations
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReslRunFunction.Arn}/invocations'
       CredentialsArn: !GetAtt ApiGatewayIamRole.Arn
       IntegrationMethod: POST
       ConnectionType: INTERNET
