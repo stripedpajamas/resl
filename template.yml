@@ -9,9 +9,6 @@ Resources:
     Properties:
       Description: n/a don't ask
       ProtocolType: HTTP
-      EndpointConfiguration:
-        Types:
-          - EDGE
       Name: resl-edge-api
 
   ApiGatewayStage:
