@@ -3,79 +3,21 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS API Gateway with a Lambda Integration
 
 Resources:
-
-  ApiGatewayHTTPApi:
-    Type: AWS::ApiGatewayV2::Api
-    Properties:
-      Description: n/a don't ask
-      ProtocolType: HTTP
-      Name: resl-edge-api
-
-  ApiGatewayStage:
-    Type: AWS::ApiGatewayV2::Stage
-    Properties:
-      Description: RESL API Stage v0
-      ApiId: !Ref ApiGatewayHTTPApi
-      StageName: 'v0'
-      AutoDeploy: true
-
-  ReslRunRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiKeyRequired: false
-      AuthorizationType: NONE
-      ApiId: !Ref ApiGatewayHTTPApi
-      RouteKey: 'POST /run'
-      Target: !Join
-        - /
-        - - integrations
-          - !Ref ReslRunLambdaIntegration
-
-  ReslRunLambdaIntegration:
-    Type: 'AWS::ApiGatewayV2::Integration'
-    Properties:
-      ApiId: !Ref ApiGatewayHTTPApi
-      Description: RESL run lambda
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReslRunFunction.Arn}/invocations'
-      CredentialsArn: !GetAtt ApiGatewayIamRole.Arn
-      IntegrationMethod: POST
-      ConnectionType: INTERNET
-      PayloadFormatVersion: 2.0
-
-  ApiGatewayIamRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Sid: ''
-            Effect: 'Allow'
-            Principal:
-              Service:
-                - 'apigateway.amazonaws.com'
-            Action:
-              - 'sts:AssumeRole'
-      Path: '/'
-      Policies:
-        - PolicyName: LambdaAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: 'Allow'
-                Action: 'lambda:*'
-                Resource: !GetAtt ReslRunFunction.Arn
-
-  ReslRunFunction:
-    Type: AWS::Lambda::Function
+  ReslRunApiFunction:
+    Type: AWS::Serverless::Function
     Properties:
       Description: the resl edge func
       FunctionName: 'resl-run'
       Handler: main
       Role: !GetAtt ReslLambdaIamRole.Arn
-      Code: ./
+      CodeUri: ./
       Runtime: go1.x
       Timeout: 29
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Path: /run
+          Method: POST
 
   ReslLambdaIamRole:
     Type: AWS::IAM::Role
@@ -92,3 +34,6 @@ Resources:
       Path: '/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+
+Transform: AWS::Serverless-2016-10-31
