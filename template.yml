@@ -41,6 +41,7 @@ Resources:
       CredentialsArn: !GetAtt ApiGatewayIamRole.Arn
       IntegrationMethod: POST
       ConnectionType: INTERNET
+      PayloadFormatVersion: 2.0
 
   ApiGatewayIamRole:
     Type: AWS::IAM::Role
