@@ -100,9 +100,10 @@ Resources:
               - Effect: Allow
                 Action: lambda:*
                 Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectName}-*
-        - PolicyName: S3AccessOnOurProjectOnly
+        - PolicyName: S3AccessOnEverything
           PolicyDocument:
             Statement:
               - Effect: Allow
                 Action: s3:*
-                Resource: !Sub arn:aws:s3:::${ProjectName}-*
+                Resource: "*"
+
