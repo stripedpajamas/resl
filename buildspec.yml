@@ -1,0 +1,13 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - go get github.com/aws/aws-lambda-go/lambda
+      - GOOS=linux go build main.go
+      - export BUCKET="resl-build-artifacts"
+      - aws cloudformation package --template-file template.yml --s3-bucket $BUCKET --output-template-file outputtemplate.yml
+artifacts:
+  type: zip
+  files:
+    - template.yml
+    - outputtemplate.yml
