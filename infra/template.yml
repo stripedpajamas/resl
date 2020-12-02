@@ -43,7 +43,7 @@ Resources:
           - - Type: EVENT
               Pattern: PUSH
             - Type: HEAD_REF
-              Pattern: ^refs/tags/v\d+$
+              Pattern: ^refs/tags/v\d+\.\d+\.\d+$
       Cache:
         Type: LOCAL
         Modes:
