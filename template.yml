@@ -29,7 +29,7 @@ Resources:
       Target: !Join
         - /
         - - integrations
-        - !Ref ReslRunLambdaIntegration
+        - - !Ref ReslRunLambdaIntegration
 
   ReslRunLambdaIntegration:
     Type: 'AWS::ApiGatewayV2::Integration'
