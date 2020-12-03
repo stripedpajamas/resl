@@ -34,7 +34,7 @@ Resources:
   ReslLambdaIamRole:
     Type: AWS::IAM::Role
     Properties:
-      ReslRunLambdaPolicy:
+      AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
           - Effect: 'Allow'
@@ -43,12 +43,17 @@ Resources:
                 - 'lambda.amazonaws.com'
             Action:
               - 'sts:AssumeRole'
-          - Effect: 'Allow'
-            Action:
-              - 'lambda:InvokeFunction'
-              - 'lambda:InvokeAsync'
-            Resource: !GetAtt ReslLangLambda.Arn
       Path: '/'
+      Policies:
+        - PolicyName: InvokeLangLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'lambda:InvokeFunction'
+                  - 'lambda:InvokeAsync'
+                Resource: !GetAtt ReslLangLambda.Arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
