@@ -41,7 +41,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		}, err
 	}
 
-	output, err = client.Invoke(&lambdaClient.InvokeInput{FunctionName: aws.String("ReslLangLambda"), Payload: payload})
+	output, err := client.Invoke(&lambdaClient.InvokeInput{FunctionName: aws.String("ReslLangLambda"), Payload: payload})
 
 	if err != nil {
 		fmt.Println(err)
@@ -51,7 +51,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       output.Payload,
+		Body:       string(output.Payload),
 		StatusCode: 200,
 	}, nil
 }
