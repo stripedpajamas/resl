@@ -47,5 +47,14 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
+  ReslLangLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt ReslRunApiFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: lambda.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !GetAtt ReslRunApiFunction.Arn
+
 
 Transform: AWS::Serverless-2016-10-31
