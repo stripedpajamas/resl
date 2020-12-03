@@ -33,24 +33,25 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	client := lambdaClient.New(sess, &aws.Config{Region: aws.String("us-west-2")})
 
 	payload, err := json.Marshal(code{Text: "console.log('hello')", Language: "javascript"})
+
 	if err != nil {
 		fmt.Println(err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
-		}, nil
+		}, err
 	}
 
-	_, err = client.Invoke(&lambdaClient.InvokeInput{FunctionName: aws.String("ReslLangLambda"), Payload: payload})
+	output, err = client.Invoke(&lambdaClient.InvokeInput{FunctionName: aws.String("ReslLangLambda"), Payload: payload})
 
 	if err != nil {
 		fmt.Println(err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
-		}, nil
+		}, err
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       request.Body,
+		Body:       output.Payload,
 		StatusCode: 200,
 	}, nil
 }

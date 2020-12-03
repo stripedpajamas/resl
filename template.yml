@@ -34,6 +34,14 @@ Resources:
   ReslLambdaIamRole:
     Type: AWS::IAM::Role
     Properties:
+      InvokeLangLambdaPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Action:
+              - 'lambda:InvokeFunction'
+              - 'lambda:InvokeAsync'
+            Resource: !GetAtt ReslLangLambda.Arn
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -46,15 +54,5 @@ Resources:
       Path: '/'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-
-  ReslLangLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt ReslRunApiFunction.Arn
-      Action: lambda:InvokeFunction
-      Principal: lambda.amazonaws.com
-      SourceAccount: !Ref 'AWS::AccountId'
-      SourceArn: !GetAtt ReslRunApiFunction.Arn
-
 
 Transform: AWS::Serverless-2016-10-31
