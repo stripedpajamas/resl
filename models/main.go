@@ -11,3 +11,12 @@ type CodeProcessResponse struct {
 	Output   string `json:"output"`
 	ExitCode int    `json:"exitCode"`
 }
+
+// LanguageConfig represents properties for running each supported language
+type LanguageConfig struct {
+	Name        string `json:"langName"`
+	Extension   string `json:"extension"`
+	Placeholder string `json:"placeholder"`
+	FileName    string `json:"fileName"`
+	Command     string `json:"runCmd"`
+}
