@@ -2,7 +2,7 @@
 FROM public.ecr.aws/lambda/nodejs:12
 
 
-FROM golang:1.15-alpine
+FROM public.ecr.aws/bitnami/golang:1.14.12-debian-10-r11
 
 RUN pwd
 
