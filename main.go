@@ -59,26 +59,17 @@ func parseLanguage(payload *CodePayload) {
 func parseText(text string) CodePayload {
 	text = strings.Trim(text, " ")
 	chars := []rune(text)
-	separatorIdx := -1
-	currIdx := 0
 	textLen := len(chars)
 	code := ""
 	lang := text
-	var c rune
 
-	for separatorIdx == -1 && currIdx < textLen {
-		c = rune(chars[currIdx])
-
+	for idx, c := range text {
 		if c == ' ' {
-			separatorIdx = currIdx
+			return CodePayload{
+				Code:     string(chars[idx+1 : textLen]),
+				Language: string(chars[0:idx]),
+			}
 		}
-
-		currIdx++
-	}
-
-	if separatorIdx > -1 {
-		code = string(chars[separatorIdx+1 : textLen])
-		lang = string(chars[0:separatorIdx])
 	}
 
 	return CodePayload{
