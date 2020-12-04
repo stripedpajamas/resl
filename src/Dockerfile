@@ -2,7 +2,9 @@
 FROM public.ecr.aws/lambda/nodejs:12
 
 
-FROM public.ecr.aws/lambda/go:1.2020.12.03.17
+FROM golang:1.15-alpine
+
+RUN pwd
 
 # Copy run handler folder to current directory
 COPY handlers/run_handler /build
