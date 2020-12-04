@@ -60,8 +60,6 @@ func parseText(text string) CodePayload {
 	text = strings.Trim(text, " ")
 	chars := []rune(text)
 	textLen := len(chars)
-	code := ""
-	lang := text
 
 	for idx, c := range text {
 		if c == ' ' {
@@ -73,8 +71,8 @@ func parseText(text string) CodePayload {
 	}
 
 	return CodePayload{
-		Code:     code,
-		Language: lang,
+		Code:     "",
+		Language: text,
 	}
 }
 
@@ -93,7 +91,6 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	client := lambdaClient.New(sess, &aws.Config{Region: aws.String("us-west-2")})
 
 	payload, err := getCodePayloadFromRequestBody(body)
-
 	if err != nil {
 		fmt.Println(err)
 		return events.APIGatewayProxyResponse{
@@ -105,8 +102,8 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		FunctionName: aws.String("resl-lang"),
 		Payload:      payload,
 	}
-	output, err := client.Invoke(&input)
 
+	output, err := client.Invoke(&input)
 	if err != nil {
 		fmt.Println(err)
 		return events.APIGatewayProxyResponse{

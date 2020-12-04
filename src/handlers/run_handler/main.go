@@ -2,16 +2,14 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
 type CodeInput struct {
-	Text     string
-	Language string
+	Code     string `json:"code"`
+	Language string `json:"language"`
 }
 
 type CodeOutput struct {
@@ -20,7 +18,8 @@ type CodeOutput struct {
 }
 
 func handleRequest(ctx context.Context, input CodeInput) (CodeOutput, error) {
-	return CodeOutput{}
+	fmt.Printf("Incoming request details, %s %s", input.Code, input.Language)
+	return CodeOutput{}, nil
 }
 
 func main() {
