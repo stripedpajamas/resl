@@ -19,7 +19,6 @@ phases:
       - echo Pushing Docker image...
       - docker push ${IMAGE_URI}
 
-      - go get -v all
       - GOOS=linux go build lambdas/run/main.go
       - aws cloudformation package --template-file template.yml --s3-bucket "resl-build-artifacts" --output-template-file outputtemplate.yml
 

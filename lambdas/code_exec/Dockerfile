@@ -6,7 +6,7 @@ FROM public.ecr.aws/bitnami/golang:latest
 
 WORKDIR /build
 
-# Copy run handler folder to current directory
+# Copy code to current directory
 COPY go.mod go.sum main.go ./
 
 # Install dependencies
