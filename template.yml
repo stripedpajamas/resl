@@ -12,7 +12,7 @@ Resources:
     Properties:
       Description: the resl edge func
       FunctionName: 'resl-run'
-      Handler: lambdas.run.main
+      Handler: lambdas/run/main
       Role: !GetAtt ReslLambdaIamRole.Arn
       CodeUri: ./
       Runtime: go1.x
