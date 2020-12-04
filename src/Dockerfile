@@ -2,28 +2,22 @@
 FROM public.ecr.aws/lambda/nodejs:12
 
 
-FROM public.ecr.aws/bitnami/golang:1.14.12-debian-10-r11
-
-RUN pwd
+FROM public.ecr.aws/bitnami/golang:latest
 
 # Copy run handler folder to current directory
-COPY handlers/run_handler /build
+COPY handlers/ /build
 
 WORKDIR /build
 
-RUN pwd
-
 # Install packages
-RUN go get -v all
+RUN go mod download
 
 # Build run handler
-RUN GOOS=linux go build -o main main.go
+RUN GOOS=linux go build -o main run_handler/main.go
 
 COPY main /dist
 
 WORKDIR /dist
-
-RUN pwd
 
 # Run handler
 CMD [ "main" ]
