@@ -15,7 +15,7 @@ RUN go get -v all
 # Build run handler
 RUN GOOS=linux go build -o main run_handler/main.go
 
-COPY main /dist
+COPY run_handler/main /dist
 
 WORKDIR /dist
 
