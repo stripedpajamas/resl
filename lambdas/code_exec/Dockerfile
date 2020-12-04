@@ -7,14 +7,16 @@ FROM public.ecr.aws/bitnami/golang:latest
 WORKDIR /build
 
 # Copy run handler folder to current directory
-COPY go.mod .
-COPY go.sum .
+COPY /go.mod .
+COPY /go.sum .
+
+RUN ls -alt
 
 # Install packages
 RUN go get -v all
 
 # Build run handler
-RUN GOOS=linux go build -o main main.go
+RUN GOOS=linux go build -o main /main.go
 
 # Run handler
 ENTRYPOINT [ "/build/main" ]
