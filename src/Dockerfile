@@ -10,7 +10,7 @@ COPY handlers/ /build
 WORKDIR /build
 
 # Install packages
-RUN go mod download
+RUN go get -v all
 
 # Build run handler
 RUN GOOS=linux go build -o main run_handler/main.go
