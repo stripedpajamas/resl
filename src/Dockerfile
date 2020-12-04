@@ -13,11 +13,9 @@ WORKDIR /build
 RUN go get -v all
 
 # Build run handler
-RUN GOOS=linux go build -o main run_handler/main.go
+RUN GOOS=linux go build -o ./dist/main run_handler/main.go
 
-COPY run_handler/main /dist
-
-WORKDIR /dist
+WORKDIR ./dist
 
 # Run handler
 CMD [ "main" ]
