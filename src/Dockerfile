@@ -4,10 +4,10 @@ FROM public.ecr.aws/lambda/nodejs:12
 
 FROM public.ecr.aws/bitnami/golang:latest
 
+WORKDIR /build
+
 # Copy run handler folder to current directory
 COPY handlers/ /build
-
-WORKDIR /build
 
 # Install packages
 RUN go get -v all
@@ -16,4 +16,4 @@ RUN go get -v all
 RUN GOOS=linux go build -o main run_handler/main.go
 
 # Run handler
-CMD [ "main" ]
+ENTRYPOINT [ "/build/main" ]
