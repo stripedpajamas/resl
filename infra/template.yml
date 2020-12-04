@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: resl-repo
+  ProjectRepository:
+    Type: String
+    Default: https://github.com/stripedpajamas/resl
+
+Resources:
+  EcrRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref ProjectName
+      ImageScanningConfiguration:
+        scanOnPush: true
+      ImageTagMutability: MUTABLE
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Ref ProjectName
+      ServiceRole: !Ref CodeBuildRole
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:4.0
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: PROJECT_NAME
+            Value: !Ref ProjectName
+          - Name: DOCKER_SERVER
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com
+          - Name: IMAGE_URI_BASE
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EcrRepository}
+      Source:
+        Type: GITHUB
+        Location: !Ref ProjectRepository
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PUSH
+            - Type: HEAD_REF
+              Pattern: ^refs/tags/v\d+\.\d+\.\d+$
+      Cache:
+        Type: LOCAL
+        Modes:
+          - LOCAL_DOCKER_LAYER_CACHE
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+      Artifacts:
+        Type: NO_ARTIFACTS
+
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LogsAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: logs:*
+                Resource: "*"
+        - PolicyName: EcrAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: ecr:GetAuthorizationToken
+                Resource: "*" # Does not operate on a specific resource
+              - Effect: Allow
+                Action: ecr:*
+                Resource: !GetAtt EcrRepository.Arn
+        - PolicyName: CloudFormationAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: cloudformation:*
+                Resource: "*"
+        - PolicyName: APIGatewayAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: apigateway:*
+                Resource: "*"
+        - PolicyName: IamAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: iam:*
+                Resource: "*"
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: lambda:*
+                Resource: "*"
+        - PolicyName: S3AccessOnEverything
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: "*"
+

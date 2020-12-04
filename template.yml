@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: AWS API Gateway with a Lambda Integration
+
+Parameters:
+  ImageUri:
+    Type: String
+
+Resources:
+  ReslRunApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: the resl edge func
+      FunctionName: 'resl-run'
+      Handler: main
+      Role: !GetAtt ReslLambdaIamRole.Arn
+      CodeUri: ./
+      Runtime: go1.x
+      Timeout: 29
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Path: /run
+          Method: POST
+
+  ReslLangLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: the resl lang lambda
+      FunctionName: 'resl-lang'
+      PackageType: Image
+      ImageUri: !Ref ImageUri
+
+  ReslLambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: InvokeLangLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'lambda:InvokeFunction'
+                  - 'lambda:InvokeAsync'
+                Resource: !GetAtt ReslLangLambda.Arn
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+Transform: AWS::Serverless-2016-10-31
