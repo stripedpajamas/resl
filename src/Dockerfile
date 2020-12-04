@@ -11,15 +11,19 @@ COPY handlers/run_handler /build
 
 WORKDIR /build
 
+RUN pwd
+
 # Install packages
 RUN go get -v all
 
 # Build run handler
-RUN GOOS=linux go build main.go -o main
+RUN GOOS=linux go build -o main main.go
 
 COPY main /dist
 
 WORKDIR /dist
+
+RUN pwd
 
 # Run handler
 CMD [ "main" ]
