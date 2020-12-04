@@ -15,7 +15,11 @@ RUN go get -v all
 # Build run handler
 RUN GOOS=linux go build -o ./dist/main run_handler/main.go
 
-WORKDIR ./dist
+RUN cd ./dist
+
+RUN pwd
+
+RUN ls -alt
 
 # Run handler
 CMD [ "main" ]
