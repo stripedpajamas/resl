@@ -21,7 +21,7 @@ phases:
 
       - cd lambdas/run
       - go mod download
-      - GOOS=linux go build -o run lambdas/run/main.go
+      - GOOS=linux go build -o run main.go
       - cd ../../
       - mv lambdas/run/run ./
 
