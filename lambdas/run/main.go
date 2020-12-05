@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -65,14 +66,12 @@ func validateLanguage(payload *models.CodeProcessRequest) (bool, error) {
 
 func parseText(text string) models.CodeProcessRequest {
 	text = strings.Trim(text, " ")
-	chars := []rune(text)
-	textLen := len(chars)
 
 	for idx, c := range text {
 		if c == ' ' {
 			return models.CodeProcessRequest{
-				Code:     string(chars[idx+1 : textLen]),
-				Language: string(chars[0:idx]),
+				Code:     text[idx+1:],
+				Language: text[0:idx],
 			}
 		}
 	}
@@ -125,7 +124,13 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 }
 
 func main() {
-	languages, err := models.ParseLanguageConfig()
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Current working directory, %s", dir)
+
+	languages, err := models.ParseLanguageConfig("./languages.json")
 	if err != nil {
 		panic(err)
 	}

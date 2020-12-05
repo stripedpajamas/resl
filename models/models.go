@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path"
 )
 
 // CodeProcessRequest represents the payload sent to the code runner lambda
@@ -32,17 +34,23 @@ type LanguageProperties struct {
 type LanguageConfig map[string]LanguageProperties
 
 // ParseLanguageConfig parses the languages file into a LanguageConfig model
-func ParseLanguageConfig() (LanguageConfig, error) {
-	data, err := ioutil.ReadFile("../../languages.json")
-	if err != nil {
-		fmt.Println(err)
-		return LanguageConfig{}, err
-	}
-
+func ParseLanguageConfig(filePath string) (LanguageConfig, error) {
 	var config LanguageConfig
 
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+		return config, err
+	}
+
+	data, err := ioutil.ReadFile(path.Join(dir, filePath))
+	if err != nil {
+		fmt.Println(err)
+		return config, err
+	}
+
 	if err = json.Unmarshal(data, &config); err != nil {
-		return LanguageConfig{}, err
+		return config, err
 	}
 
 	return config, nil
