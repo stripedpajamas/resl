@@ -19,7 +19,7 @@ phases:
       - echo Pushing Docker image...
       - docker push ${IMAGE_URI}
 
-      - pudhd lambdas/run
+      - pushd lambdas/run
       - go mod download
       - GOOS=linux go build -o main main.go
       - popd

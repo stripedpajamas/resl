@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -11,20 +12,17 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	lambdaClient "github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/stripedpajamas/resl/models"
 )
 
 // RequestBody represents the model of the incoming request body
 type RequestBody struct {
-	TriggerID   int    `json:"trigger_id"`
+	TriggerID   string `json:"trigger_id"`
 	Text        string `json:"text"`
 	ResponseURL string `json:"response_url"`
 }
 
-// CodePayload represents the request payload sent to the invoked language lambda ** MOVE TO SHARED PKG **
-type CodePayload struct {
-	Code     string `json:"code"`
-	Language string `json:"language"`
-}
+var languageConfig models.LanguageConfig
 
 func processRequestBody(request events.APIGatewayProxyRequest) (RequestBody, error) {
 	fmt.Printf("Incoming request body: %s", request.Body)
@@ -42,35 +40,44 @@ func processRequestBody(request events.APIGatewayProxyRequest) (RequestBody, err
 func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 	var payload = parseText(body.Text)
 
+	if valid, err := validateLanguage(&payload); !valid {
+		return nil, err
+	}
+
+	parseCode(&payload)
+
 	return json.Marshal(payload)
 }
 
-func parseCode(payload *CodePayload) {
-	// TODO
-	// clean code string
+func parseCode(payload *models.CodeProcessRequest) {
+	payload.Code = strings.ReplaceAll(payload.Code, "&amp;", "&")
+	payload.Code = strings.ReplaceAll(payload.Code, "&lt;", "&")
+	payload.Code = strings.ReplaceAll(payload.Code, "&gt;", "&")
 }
 
-func parseLanguage(payload *CodePayload) {
-	// TODO
-	// parse language
-	// validate that it is supported
+func validateLanguage(payload *models.CodeProcessRequest) (bool, error) {
+	if val, ok := languageConfig[payload.Language]; !ok {
+		return false, errors.New("language not supported")
+	}
+
+	return true, nil
 }
 
-func parseText(text string) CodePayload {
+func parseText(text string) models.CodeProcessRequest {
 	text = strings.Trim(text, " ")
 	chars := []rune(text)
 	textLen := len(chars)
 
 	for idx, c := range text {
 		if c == ' ' {
-			return CodePayload{
+			return models.CodeProcessRequest{
 				Code:     string(chars[idx+1 : textLen]),
 				Language: string(chars[0:idx]),
 			}
 		}
 	}
 
-	return CodePayload{
+	return models.CodeProcessRequest{
 		Code:     "",
 		Language: text,
 	}
@@ -118,5 +125,12 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 }
 
 func main() {
+	languages, err := models.ParseLanguageConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	languageConfig = languages
+
 	lambda.Start(handleRequest)
 }
