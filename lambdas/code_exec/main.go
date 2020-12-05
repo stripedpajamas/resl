@@ -1,4 +1,4 @@
-package codeexeclambda
+package main
 
 import (
 	"context"

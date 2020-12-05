@@ -1,4 +1,4 @@
-package runlambda
+package main
 
 import (
 	"context"
