@@ -56,7 +56,7 @@ func parseCode(payload *models.CodeProcessRequest) {
 }
 
 func validateLanguage(payload *models.CodeProcessRequest) (bool, error) {
-	if val, ok := languageConfig[payload.Language]; !ok {
+	if _, ok := languageConfig[payload.Language]; !ok {
 		return false, errors.New("language not supported")
 	}
 
