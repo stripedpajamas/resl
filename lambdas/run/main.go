@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -124,13 +123,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 }
 
 func main() {
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Current working directory, %s", dir)
-
-	languages, err := models.ParseLanguageConfig("./languages.json")
+	languages, err := models.ParseLanguageConfig("languages.json")
 	if err != nil {
 		panic(err)
 	}
