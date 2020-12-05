@@ -24,6 +24,7 @@ phases:
       - GOOS=linux go build -o main main.go
       - chmod 755 main
       - cd ../../
+      - mv lambdas/run/main ./
 
       - aws cloudformation package --template-file template.yml --s3-bucket "resl-build-artifacts" --output-template-file outputtemplate.yml
 
