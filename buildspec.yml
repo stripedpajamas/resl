@@ -21,9 +21,10 @@ phases:
 
       - cd lambdas/run
       - go mod download
-      - GOOS=linux go build -o run main.go
+      - GOOS=linux go build -o resl-run main.go
       - cd ../../
-      - mv lambdas/run/run ./
+      - mv lambdas/run/resl-run ./
+      - ls -alt
 
       - aws cloudformation package --template-file template.yml --s3-bucket "resl-build-artifacts" --output-template-file outputtemplate.yml
 
