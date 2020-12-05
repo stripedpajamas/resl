@@ -46,13 +46,16 @@ func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 
 	parseCode(&payload)
 
+	fmt.Printf("Parsed Code: %s", payload.Code)
+	fmt.Printf("Parsed Language: %s", payload.Language)
+
 	return json.Marshal(payload)
 }
 
 func parseCode(payload *models.CodeProcessRequest) {
 	payload.Code = strings.ReplaceAll(payload.Code, "&amp;", "&")
-	payload.Code = strings.ReplaceAll(payload.Code, "&lt;", "&")
-	payload.Code = strings.ReplaceAll(payload.Code, "&gt;", "&")
+	payload.Code = strings.ReplaceAll(payload.Code, "&lt;", "<")
+	payload.Code = strings.ReplaceAll(payload.Code, "&gt;", ">")
 }
 
 func validateLanguage(payload *models.CodeProcessRequest) (bool, error) {

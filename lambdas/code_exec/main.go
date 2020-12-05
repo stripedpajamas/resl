@@ -5,21 +5,12 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/stripedpajamas/resl/models"
 )
 
-type CodeInput struct {
-	Code     string `json:"code"`
-	Language string `json:"language"`
-}
-
-type CodeOutput struct {
-	Output   string `json:"output"`
-	ExitCode int    `json:"exitCode"`
-}
-
-func handleRequest(ctx context.Context, input CodeInput) (CodeOutput, error) {
+func handleRequest(ctx context.Context, input models.CodeProcessRequest) (models.CodeProcessResponse, error) {
 	fmt.Printf("Incoming request details, %s %s", input.Code, input.Language)
-	return CodeOutput{}, nil
+	return models.CodeProcessResponse{}, nil
 }
 
 func main() {
