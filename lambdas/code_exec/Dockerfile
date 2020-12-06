@@ -7,7 +7,7 @@ FROM public.ecr.aws/bitnami/golang:latest
 WORKDIR /build
 
 # Copy code to current directory
-COPY go.mod go.sum *.go ./
+COPY go.mod go.sum *.go languages.json ./
 
 # Install dependencies
 RUN go mod download
