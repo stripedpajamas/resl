@@ -2,7 +2,7 @@
 # Supported code exec languages
 FROM public.ecr.aws/bitnami/node:14.15.1-debian-10-r8
 
-FROM public.ecr.aws/lambda/go:1.2020.12.03.17
+FROM public.ecr.aws/lambda/go:latest
 
 WORKDIR /build
 
