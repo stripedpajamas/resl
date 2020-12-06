@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/stripedpajamas/resl/models"
@@ -17,6 +18,8 @@ func handleRequest(ctx context.Context, input models.CodeProcessRequest) (models
 	if !ok {
 		return models.CodeProcessResponse{}, nil
 	}
+
+	os.Chdir("/tmp")
 
 	if err := writeCodeFile(languageConfig.FileName, []byte(input.Code)); err != nil {
 		return models.CodeProcessResponse{}, err

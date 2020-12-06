@@ -15,8 +15,7 @@ RUN go mod download
 # Build code
 RUN GOOS=linux go build -o main *.go
 
-COPY ./main /tmp
+RUN pwd
+RUN ls -alt
 
-WORKDIR /tmp
-
-ENTRYPOINT [ "/tmp/main" ]
+ENTRYPOINT [ "/build/main" ]
