@@ -7,6 +7,15 @@ FROM public.ecr.aws/bitnami/golang:latest
 RUN pwd
 RUN ls -alt
 
+WORKDIR /tmp
+
+RUN pwd
+
+WORKDIR /
+
+RUN pwd
+RUN ls -alt
+
 WORKDIR /build
 
 # Copy code to current directory
