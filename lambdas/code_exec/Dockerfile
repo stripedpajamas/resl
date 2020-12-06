@@ -4,6 +4,9 @@ FROM public.ecr.aws/lambda/nodejs:12
 
 FROM public.ecr.aws/bitnami/golang:latest
 
+RUN pwd
+RUN ls -alt
+
 WORKDIR /build
 
 # Copy code to current directory
@@ -15,8 +18,8 @@ RUN go mod download
 # Build code
 RUN GOOS=linux go build -o main *.go
 
-WORKDIR /tmp
+COPY main /tmp
 
-COPY /build/main ./
+WORKDIR /tmp
 
 ENTRYPOINT [ "/tmp/main" ]
