@@ -14,13 +14,17 @@ phases:
       - export IMAGE_URI=${IMAGE_URI_BASE}:${GIT_TAG}
 
       - echo Building Docker image as ${IMAGE_URI}...
-      - docker build -t ${IMAGE_URI} src
+      - docker build -t ${IMAGE_URI} lambdas/code_exec
 
       - echo Pushing Docker image...
       - docker push ${IMAGE_URI}
 
-      - go get -v all
-      - GOOS=linux go build main.go
+      - cd lambdas/run
+      - go mod download
+      - GOOS=linux go build -o main main.go
+      - cd ../../
+      - mv lambdas/run/main ./
+
       - aws cloudformation package --template-file template.yml --s3-bucket "resl-build-artifacts" --output-template-file outputtemplate.yml
 
       - echo Deploying project...
