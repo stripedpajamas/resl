@@ -16,8 +16,8 @@ type CodeProcessRequest struct {
 
 // CodeProcessResponse represents the payload returned by the code runner lambda
 type CodeProcessResponse struct {
-	Output   string `json:"output"`
-	ExitCode int    `json:"exitCode"`
+	Output string `json:"output"`
+	Error  error  `json:"error"`
 }
 
 // LanguageProperties represents properties for running each supported language

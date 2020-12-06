@@ -4,32 +4,20 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os/exec"
-	"path"
 
 	"github.com/stripedpajamas/resl/models"
 )
 
-func writeCodeFile(fileName string, code []byte) (string, error) {
+func writeCodeFile(fileName string, code []byte) error {
+	fmt.Printf("Writing file: %s", fileName)
 
-	filePath := path.Join("/tmp", fileName)
-	fmt.Printf("Writing file: %s", filePath)
-
-	if err := ioutil.WriteFile(filePath, code, 0755); err != nil {
-		return "", err
+	if err := ioutil.WriteFile(fileName, code, 0755); err != nil {
+		return err
 	}
 
-	files, err := ioutil.ReadDir("/tmp")
-	if err != nil {
-		fmt.Println(err)
-	}
+	fmt.Printf("Created file to execute code: %s", fileName)
 
-	for _, f := range files {
-		fmt.Println(f.Name())
-	}
-
-	fmt.Printf("Created file to execute code: %s", filePath)
-
-	return filePath, nil
+	return nil
 }
 
 func runCode(fileName string, languageConfig models.LanguageProperties) (string, error) {
