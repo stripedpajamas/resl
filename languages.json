@@ -4,7 +4,7 @@
       "langName": "JavaScript",
       "placeholder": "console.log(\"Hello world\")",
       "fileName": "index.js",
-      "runCmd": "node index.js"
+      "runCmd": "node %s"
     },
     "py": {
       "langName": "Python",

@@ -40,7 +40,7 @@ func processRequestBody(request events.APIGatewayProxyRequest) (RequestBody, err
 func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 	var payload = parseText(body.Text)
 
-	if valid, err := validateLanguage(&payload); !valid {
+	if valid, err := validateLanguage(payload); !valid {
 		return nil, err
 	}
 
@@ -58,7 +58,7 @@ func parseCode(payload *models.CodeProcessRequest) {
 	payload.Code = strings.ReplaceAll(payload.Code, "&gt;", ">")
 }
 
-func validateLanguage(payload *models.CodeProcessRequest) (bool, error) {
+func validateLanguage(payload models.CodeProcessRequest) (bool, error) {
 	if _, ok := languageConfig[payload.Language]; !ok {
 		return false, errors.New("language not supported")
 	}
