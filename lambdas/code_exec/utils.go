@@ -10,25 +10,21 @@ import (
 )
 
 func writeCodeFile(fileName string, code []byte) (string, error) {
-	files, err := ioutil.ReadDir("/")
+
+	filePath := path.Join("/tmp", fileName)
+	fmt.Printf("Writing file: %s", filePath)
+
+	if err := ioutil.WriteFile(filePath, code, 0755); err != nil {
+		return "", err
+	}
+
+	files, err := ioutil.ReadDir("/tmp")
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	for _, f := range files {
 		fmt.Println(f.Name())
-	}
-
-	files, err = ioutil.ReadDir("/tmp")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	filePath := path.Join("/tmp", fileName)
-	fmt.Printf("Writing file: %s", filePath)
-
-	if err = ioutil.WriteFile(filePath, code, 0755); err != nil {
-		return "", err
 	}
 
 	fmt.Printf("Created file to execute code: %s", filePath)
