@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"os/exec"
 	"path"
 
@@ -11,15 +10,10 @@ import (
 )
 
 func writeCodeFile(fileName string, code []byte) (string, error) {
-	dir, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
 	filePath := path.Join("/tmp", fileName)
 	fmt.Printf("Writing file: %s", filePath)
 
-	err = ioutil.WriteFile(filePath, code, 0755)
+	err := ioutil.WriteFile(filePath, code, 0755)
 	if err != nil {
 		return "", err
 	}
