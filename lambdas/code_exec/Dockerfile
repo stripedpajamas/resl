@@ -6,6 +6,8 @@ FROM public.ecr.aws/bitnami/golang:latest
 
 WORKDIR /tmp
 
+WORKDIR /build
+
 # Copy code to current directory
 COPY go.mod go.sum *.go languages.json ./
 
@@ -15,4 +17,4 @@ RUN go mod download
 # Build code
 RUN GOOS=linux go build -o main *.go
 
-ENTRYPOINT [ "/tmp/main" ]
+ENTRYPOINT [ "/build/main" ]
