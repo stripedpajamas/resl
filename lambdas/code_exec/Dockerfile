@@ -4,6 +4,8 @@ FROM public.ecr.aws/lambda/nodejs:12
 
 FROM public.ecr.aws/bitnami/golang:latest
 
+COPY go.mod go.sum *.go languages.json ./
+
 # Install dependencies
 RUN go mod download
 
