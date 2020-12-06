@@ -7,7 +7,7 @@ FROM public.ecr.aws/bitnami/golang:latest
 WORKDIR /build
 
 # Copy code to current directory
-COPY go.mod go.sum main.go ./
+COPY go.mod go.sum *.go ./
 
 # Install dependencies
 RUN go mod download
@@ -16,3 +16,4 @@ RUN go mod download
 RUN GOOS=linux go build -o main *.go
 
 ENTRYPOINT [ "/build/main" ]
+;
