@@ -16,7 +16,9 @@ func writeCodeFile(fileName string, code []byte) (string, error) {
 		return "", err
 	}
 
-	filePath := path.Join(dir, "tmp", fileName)
+	filePath := path.Join(dir, fileName)
+	fmt.Printf("Writing file: %s", filePath)
+
 	err = ioutil.WriteFile(filePath, code, 0755)
 	if err != nil {
 		return "", err
