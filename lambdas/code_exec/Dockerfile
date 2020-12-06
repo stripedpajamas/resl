@@ -13,6 +13,6 @@ COPY go.mod go.sum main.go ./
 RUN go mod download
 
 # Build code
-RUN GOOS=linux go build -o main main.go
+RUN GOOS=linux go build -o main *.go
 
 ENTRYPOINT [ "/build/main" ]
