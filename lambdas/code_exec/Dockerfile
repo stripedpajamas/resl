@@ -15,7 +15,4 @@ RUN go mod download
 # Build code
 RUN GOOS=linux go build -o main *.go
 
-RUN pwd
-RUN ls -alt
-
 ENTRYPOINT [ "/build/main" ]

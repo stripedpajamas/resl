@@ -4,13 +4,13 @@
       "langName": "JavaScript",
       "placeholder": "console.log(\"Hello world\")",
       "fileName": "index.js",
-      "runCmd": "node %s"
+      "runCmd": "node"
     },
     "py": {
       "langName": "Python",
       "placeholder": "print(\"Hello world\")",
       "fileName": "main.py",
-      "runCmd": "python main.py"
+      "runCmd": "python"
     },
     "ts": {
       "langName": "TypeScript",
