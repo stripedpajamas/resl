@@ -10,8 +10,9 @@ import (
 )
 
 func writeCodeFile(fileName string, code []byte) (string, error) {
-	file := path.Join("/tmp", fileName)
+	fmt.Println("Writing Code File")
 
+	file := path.Join("/tmp", fileName)
 	fmt.Printf("Writing file: %s \n", file)
 
 	if err := ioutil.WriteFile(file, code, 0755); err != nil {
@@ -24,6 +25,8 @@ func writeCodeFile(fileName string, code []byte) (string, error) {
 }
 
 func runCode(languageConfig models.LanguageProperties) (string, error) {
+	fmt.Println("Running Code")
+
 	binary, err := exec.LookPath(languageConfig.RunCommand)
 	if err != nil {
 		return "", err
