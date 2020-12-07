@@ -1,8 +1,7 @@
-
-# Supported code exec languages
-FROM public.ecr.aws/bitnami/node:14.15.1-debian-10-r8
-
 FROM public.ecr.aws/bitnami/golang:latest
+
+RUN apt-get update
+RUN apt-get install -y nodejs
 
 WORKDIR /build
 
