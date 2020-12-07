@@ -1,6 +1,6 @@
 
 # Supported code exec languages
-FROM public.ecr.aws/lambda/nodejs:12
+FROM public.ecr.aws/bitnami/node:14.15.1-debian-10-r8
 
 FROM public.ecr.aws/bitnami/golang:latest
 
