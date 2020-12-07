@@ -41,5 +41,7 @@ func runCode(languageConfig models.LanguageProperties) (string, error) {
 		return "", err
 	}
 
+	fmt.Printf("Command output: %s \n", runOut)
+
 	return string(runOut), nil
 }
