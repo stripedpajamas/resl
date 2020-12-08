@@ -33,20 +33,14 @@ func runCode(languageConfig models.LanguageProperties) (string, error) {
 		return "", err
 	}
 
-	debugCmd := exec.Command(binary, "-v")
-	debugOut, err := debugCmd.Output()
-	if err != nil {
-		return "", err
-	}
-	fmt.Println(string(debugOut))
-
-	fmt.Printf("Running command `%s %s` \n", binary, languageConfig.FileName)
 	dat, err := ioutil.ReadFile(languageConfig.FileName)
 	if err != nil {
 		return "", err
 	}
 
 	fmt.Printf("Code to be executed: %s \n", string(dat))
+
+	fmt.Printf("Running command `%s %s` \n", binary, languageConfig.FileName)
 	runCmd := exec.Command(binary, languageConfig.FileName)
 	runOut, err := runCmd.Output()
 	if err != nil {

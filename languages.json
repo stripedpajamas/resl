@@ -12,6 +12,12 @@
       "fileName": "main.py",
       "runCmd": "python"
     },
+    "py3": {
+      "langName": "Python",
+      "placeholder": "print(\"Hello world\")",
+      "fileName": "main.py",
+      "runCmd": "python3"
+    },
     "ts": {
       "langName": "TypeScript",
       "placeholder": "console.log(\"Hello world\")",
