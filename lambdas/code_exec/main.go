@@ -18,14 +18,14 @@ func handleRequest(ctx context.Context, input models.CodeProcessRequest) (models
 		return models.CodeProcessResponse{}, nil
 	}
 
-	file, err := writeCodeFile(languageConfig.FileName, []byte(input.Code))
+	filePath, err := writeCodeFile(languageConfig.FileName, []byte(input.Code))
 	if err != nil {
 		return models.CodeProcessResponse{
 			Error: err,
 		}, err
 	}
 
-	languageConfig.FileName = file
+	languageConfig.FileName = filePath
 
 	output, err := runCode(languageConfig)
 	if err != nil {

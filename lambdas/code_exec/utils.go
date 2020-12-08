@@ -22,13 +22,6 @@ func writeCodeFile(fileName string, code []byte) (string, error) {
 
 	fmt.Printf("Created file to execute code: %s \n", path)
 
-	dat, err := ioutil.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-
-	fmt.Println(string(dat))
-
 	return path, nil
 }
 
@@ -45,9 +38,15 @@ func runCode(languageConfig models.LanguageProperties) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(debugOut)
+	fmt.Println(string(debugOut))
 
 	fmt.Printf("Running command `%s %s` \n", binary, languageConfig.FileName)
+	dat, err := ioutil.ReadFile(languageConfig.FileName)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Printf("Code to be executed: %s \n", string(dat))
 	runCmd := exec.Command(binary, languageConfig.FileName)
 	runOut, err := runCmd.Output()
 	if err != nil {
