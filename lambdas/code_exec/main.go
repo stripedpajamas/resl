@@ -11,7 +11,7 @@ import (
 var languageConfigs models.LanguageConfig
 
 func handleRequest(ctx context.Context, input models.CodeProcessRequest) (models.CodeProcessResponse, error) {
-	fmt.Printf("Incoming request details, %s %s", input.Code, input.Language)
+	fmt.Printf("Incoming request details, code: %s language: %s", input.Code, input.Language)
 
 	languageConfig, ok := languageConfigs[input.Language]
 	if !ok {

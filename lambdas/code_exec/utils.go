@@ -12,16 +12,24 @@ import (
 func writeCodeFile(fileName string, code []byte) (string, error) {
 	fmt.Println("Writing Code File")
 
-	file := path.Join("/tmp", fileName)
-	fmt.Printf("Writing file: %s \n", file)
+	path := path.Join("/tmp", fileName)
 
-	if err := ioutil.WriteFile(file, code, 0755); err != nil {
+	fmt.Printf("Writing file: %s \n", path)
+
+	if err := ioutil.WriteFile(path, code, 0755); err != nil {
 		return "", err
 	}
 
-	fmt.Printf("Created file to execute code: %s \n", file)
+	fmt.Printf("Created file to execute code: %s \n", path)
 
-	return file, nil
+	dat, err := ioutil.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println(string(dat))
+
+	return path, nil
 }
 
 func runCode(languageConfig models.LanguageProperties) (string, error) {
@@ -32,10 +40,15 @@ func runCode(languageConfig models.LanguageProperties) (string, error) {
 		return "", err
 	}
 
+	debugCmd := exec.Command(binary, "-v")
+	debugOut, err := debugCmd.Output()
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(debugOut)
+
 	fmt.Printf("Running command `%s %s` \n", binary, languageConfig.FileName)
-
 	runCmd := exec.Command(binary, languageConfig.FileName)
-
 	runOut, err := runCmd.Output()
 	if err != nil {
 		return "", err
