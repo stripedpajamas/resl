@@ -6,7 +6,7 @@ RUN apt-get -y upgrade
 
 # Install languages
 RUN apt-get install -y nodejs
-RUN apt-get install python3.7
+RUN apt-get install -y python3.7
 
 WORKDIR /build
 
