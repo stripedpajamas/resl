@@ -1,3 +1,5 @@
+FROM public.ecr.aws/bitnami/golang:latest
+
 # Update system
 RUN apt-get update
 RUN apt-get -y upgrade
@@ -5,9 +7,6 @@ RUN apt-get -y upgrade
 # Install languages
 RUN apt-get install -y nodejs
 RUN apt-get install python3.7
-
-# Build Handler
-FROM public.ecr.aws/bitnami/golang:latest
 
 WORKDIR /build
 
