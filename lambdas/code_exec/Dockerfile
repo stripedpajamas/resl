@@ -1,4 +1,4 @@
-FROM public.ecr.aws/bitnami/node:14.15.1-debian-10-r8 as build-image
+FROM node:14-buster as build-image
 
 # Install aws-lambda-cpp build dependencies
 RUN apt-get update && \
@@ -17,7 +17,7 @@ WORKDIR /function
 RUN npm install aws-lambda-ric
 
 # Grab a fresh slim copy of the image to reduce the final size
-FROM public.ecr.aws/bitnami/node:14.15.1-debian-10-r8
+FROM node:14-buster-slim
 
 # Include global arg in this stage of the build
 ARG FUNCTION_DIR
