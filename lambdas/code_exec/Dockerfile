@@ -8,7 +8,7 @@ RUN apt-get update && \
     cmake \
     unzip \
     libcurl4-openssl-dev \
-    python
+    python \
     python3
 
 # Copy function code
