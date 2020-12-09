@@ -8,7 +8,9 @@ exports.handler = async ({ code, props }) => {
 
   const { extension, runCmd } = props
 
-  const filePath = createFilePath("./", extension)
+	console.log({ extension, runCmd })
+
+  const filePath = createFilePath('/tmp', extension)
   await writeCodeFile(filePath, code)
   const out = await runCode(runCmd, [filePath])
   await deleteCodeFile(filePath)
@@ -37,7 +39,7 @@ const deleteCodeFile = async (filePath) => {
 const runCode = async (cmd, args) => {
   console.log('Running Code')
 
-  const { all } = await execa(cmd, args, { all: true })
+	const { all: output } = await execa(cmd, args, { all: true })
 
-  return all
+  return output
 }
