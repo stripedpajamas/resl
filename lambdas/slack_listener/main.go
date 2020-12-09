@@ -116,7 +116,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 			Headers: map[string]string{
 				"Content-Type": "application/json",
 			},
-		}, err
+		}, nil
 	}
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{

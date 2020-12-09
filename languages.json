@@ -4,18 +4,18 @@
       "langName": "JavaScript",
       "placeholder": "console.log(\"Hello world\")",
       "extension": "js",
-      "runCmd": "node"
+      "runCmd": "/usr/local/bin/node"
     },
     "py": {
       "langName": "Python",
       "placeholder": "print(\"Hello world\")",
       "extension": "py",
-      "runCmd": "python"
+      "runCmd": "/usr/bin/python"
     },
     "py3": {
       "langName": "Python",
       "placeholder": "print(\"Hello world\")",
       "extension": "py",
-      "runCmd": "python3"
+      "runCmd": "/usr/bin/python3"
     }
   }
