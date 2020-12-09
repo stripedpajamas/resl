@@ -3,14 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"io/ioutil"
 	"log"
-	"os"
-	"path"
 	"strings"
 
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -35,6 +30,11 @@ func wrapString(s string) string {
 }
 
 func handleRequest(ctx context.Context, request models.CodeProcessRequest) error {
+	payload, err := json.Marshal(request)
+	if err != nil {
+		return err
+	}
+
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
@@ -43,7 +43,7 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 
 	input := lambdaClient.InvokeInput{
 		FunctionName: aws.String("resl-lang"),
-		Payload:      request,
+		Payload:      payload,
 	}
 
 	output, err := client.Invoke(&input)
@@ -53,7 +53,7 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		return err
 	}
 
-	slack.SendChannelResponse(request.ResponseURL, wrapString(escapeString(output.Payload)))
+	slack.SendChannelResponse(request.ResponseURL, wrapString(escapeString(string(output.Payload))))
 
 	return nil
 }
