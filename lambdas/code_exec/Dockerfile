@@ -7,7 +7,9 @@ RUN apt-get update && \
     make \
     cmake \
     unzip \
-    libcurl4-openssl-dev
+    libcurl4-openssl-dev \
+    python
+    python3
 
 # Copy function code
 COPY package*.json /function/
@@ -16,7 +18,6 @@ COPY index.js /function/index.js
 WORKDIR /function
 
 RUN npm install
-RUN npm install aws-lambda-ric
 
 # Grab a fresh slim copy of the image to reduce the final size
 FROM node:14-buster-slim

@@ -9,6 +9,7 @@
   "author": "Kevin Orlando & Peter Squicciarini",
   "license": "ISC",
   "dependencies": {
+    "aws-lambda-ric": "latest",
     "execa": "^5.0.0",
     "ulid": "^2.3.0"
   }
