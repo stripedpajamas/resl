@@ -69,7 +69,7 @@ func getCodePayloadFromRequestBody(bodyValues url.Values) ([]byte, error) {
 
 	// json stringify the result for the execution lambda
 	return json.Marshal(models.CodeProcessRequest{
-		ResponseURL: bodyValues["request_url"][0],
+		ResponseURL: bodyValues["response_url"][0],
 		Code:        code,
 		Props:       props,
 	})
