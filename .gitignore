@@ -1,2 +1,5 @@
 node_modules
 _testing.js
+lambdas/slack_listener/slack_listener
+lambdas/slack_responder/slack_responder
+
