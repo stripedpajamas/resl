@@ -7,9 +7,7 @@ RUN apt-get update && \
     make \
     cmake \
     unzip \
-    libcurl4-openssl-dev \
-    python \
-    python3
+    libcurl4-openssl-dev
 
 # Copy function code
 COPY package*.json /function/
@@ -21,6 +19,12 @@ RUN npm install
 
 # Grab a fresh slim copy of the image to reduce the final size
 FROM node:14-buster-slim
+
+# install language runtimes
+RUN apt-get update && \
+    apt-get install -y \
+    python \
+    python3
 
 # Include global arg in this stage of the build
 ARG FUNCTION_DIR
