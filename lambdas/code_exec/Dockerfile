@@ -1,18 +1,36 @@
+FROM node:14-buster as build-image
 
-FROM public.ecr.aws/lambda/nodejs:12
+# Install aws-lambda-cpp build dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    g++ \
+    make \
+    cmake \
+    unzip \
+    libcurl4-openssl-dev
 
+# Copy function code
+COPY index.js /function/index.js
 
-FROM public.ecr.aws/bitnami/golang:latest
+WORKDIR /function
 
-WORKDIR /build
+RUN npm install aws-lambda-ric
 
-# Copy code to current directory
-COPY go.mod go.sum main.go ./
+# Grab a fresh slim copy of the image to reduce the final size
+FROM node:14-buster-slim
 
-# Install dependencies
-RUN go mod download
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
 
-# Build code
-RUN GOOS=linux go build -o main main.go
+# Set working directory to function root directory
+WORKDIR /function
 
-ENTRYPOINT [ "/build/main" ]
+# Copy in the built dependencies
+COPY --from=build-image /function /function
+
+ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/bin/aws-lambda-rie
+RUN chmod 755 /usr/bin/aws-lambda-rie
+COPY entry.sh /
+
+ENTRYPOINT [ "/entry.sh" ]
+CMD ["index.handler"]
