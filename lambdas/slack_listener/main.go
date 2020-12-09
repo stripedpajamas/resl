@@ -104,11 +104,14 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	input := lambdaClient.InvokeInput{
 		FunctionName:   aws.String("resl_slack_responder"),
 		Payload:        payload,
-		InvocationType: aws.String("event"),
+		InvocationType: aws.String("Event"),
 	}
 
 	if _, err = client.Invoke(&input); err != nil {
 		log.Printf("Error while invoking the code process lambda: %s\n", err.Error())
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+		}, err
 	}
 
 	res, err := json.Marshal(SlackResponse{ResponseType: "in_channel"})
