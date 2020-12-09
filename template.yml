@@ -13,7 +13,7 @@ Resources:
       Description: This lambda listens to Slack
       FunctionName: 'resl_slack_listener'
       Handler: slack_listener
-      Role: !GetAtt ReslLambdaIamRole.Arn
+      Role: !GetAtt ReslSlackListenerLambdaIamRole.Arn
       CodeUri: ./
       Runtime: go1.x
       Timeout: 29
@@ -37,12 +37,12 @@ Resources:
       Description: This lambda calls the code execution lambda and responds to Slack
       FunctionName: 'resl_slack_responder'
       Handler: slack_responder
-      Role: !GetAtt ReslLambdaIamRole.Arn
+      Role: !GetAtt ReslSlackResponderLambdaIamRole.Arn
       CodeUri: ./
       Runtime: go1.x
       Timeout: 29
 
-  ReslLambdaIamRole:
+  ReslSlackResponderLambdaIamRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -64,9 +64,33 @@ Resources:
                 Action:
                   - 'lambda:InvokeFunction'
                   - 'lambda:InvokeAsync'
-                Resource: 
-                  - !GetAtt ReslCodeExecLambda.Arn
-                  - !GetAtt ReslSlackResponderLambda.Arn
+                Resource: !GetAtt ReslCodeExecLambda.Arn
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  ReslSlackListenerLambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: InvokeLangLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'lambda:InvokeFunction'
+                  - 'lambda:InvokeAsync'
+                Resource: !GetAtt ReslSlackResponderLambda.Arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
