@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"log"
+	"net/url"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -18,15 +20,15 @@ import (
 
 var languageConfig models.LanguageConfig
 
-// RequestBody represents the model of the incoming request body
-type RequestBody struct {
-	TriggerID   string `json:"trigger_id"`
-	Text        string `json:"text"`
-	ResponseURL string `json:"response_url"`
-}
+func getCodePayloadFromRequestBody(bodyValues url.Values) ([]byte, error) {
+	if _, found := bodyValues["text"]; !found {
+		return []byte{}, errors.New("failed to parse language and code: no text")
+	}
+	if _, found := bodyValues["response_url"]; !found {
+		return []byte{}, errors.New("failed to parse language and code: no response url")
+	}
 
-func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
-	trimmedText := strings.Trim(body.Text, " ")
+	trimmedText := strings.Trim(bodyValues["text"][0], " ")
 	spaceIdx := strings.IndexRune(trimmedText, ' ')
 
 	if spaceIdx < 0 {
@@ -67,25 +69,37 @@ func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 
 	// json stringify the result for the execution lambda
 	return json.Marshal(models.CodeProcessRequest{
-		ResponseURL: body.ResponseURL,
+		ResponseURL: bodyValues["request_url"][0],
 		Code:        code,
 		Props:       props,
 	})
 }
 
-func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var body RequestBody
+func parseFormData(body string) (url.Values, error) {
+	form, err := base64.StdEncoding.DecodeString(body)
+	if err != nil {
+		return nil, err
+	}
+	values, err := url.ParseQuery(string(form))
+	if err != nil {
+		return nil, err
+	}
 
+	return values, nil
+}
+
+func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("Request body: %s\n", request.Body)
 
-	if err := json.Unmarshal([]byte(request.Body), &body); err != nil {
+	bodyValues, err := parseFormData(request.Body)
+	if err != nil {
 		log.Printf("Error while parsing request: %s\n", err.Error())
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
 		}, err
 	}
 
-	payload, err := getCodePayloadFromRequestBody(body)
+	payload, err := getCodePayloadFromRequestBody(bodyValues)
 	if err != nil {
 		log.Printf("Error while parsing language and code from request: %s\n", err.Error())
 		responseBody, serializationErr := slack.PrivateAcknowledgement(err.Error())
