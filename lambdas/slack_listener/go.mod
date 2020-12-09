@@ -1,4 +1,4 @@
-module github.com/stripedpajamas/resl/lambdas/run
+module github.com/stripedpajamas/resl/lambdas/slack_listener
 
 go 1.15
 

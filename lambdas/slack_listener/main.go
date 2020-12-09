@@ -4,10 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
-	"os"
-	"path"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -15,21 +12,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	lambdaClient "github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/stripedpajamas/resl/models"
 )
 
-var languageConfig LanguageConfig
-
-// LanguageConfig is a map of language to props
-type LanguageConfig map[string]LanguageProperties
-
-// LanguageProperties represents properties for running each supported language
-type LanguageProperties struct {
-	Name           string `json:"langName"`
-	Extension      string `json:"extension"`
-	Placeholder    string `json:"placeholder"`
-	RunCommand     string `json:"runCmd"`
-	CompileCommand string `json:"compileCmd"`
-}
+var languageConfig models.LanguageConfig
 
 // RequestBody represents the model of the incoming request body
 type RequestBody struct {
@@ -38,11 +24,9 @@ type RequestBody struct {
 	ResponseURL string `json:"response_url"`
 }
 
-// CodeProcessRequest represents the payload sent to the code runner lambda
-type CodeProcessRequest struct {
-	Code     string             `json:"code"`
-	Language string             `json:"language"`
-	Props    LanguageProperties `json:"props"`
+// SlackResponse represents the model slack expects
+type SlackResponse struct {
+	ResponseType string `json:"response_type"`
 }
 
 func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
@@ -57,7 +41,7 @@ func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 	code := trimmedText[spaceIdx+1:]
 
 	// confirm this language is supported
-	var props LanguageProperties
+	var props models.LanguageProperties
 	if langProps, found := languageConfig[language]; !found {
 		return []byte{}, errors.New("language not supported")
 	} else {
@@ -86,7 +70,7 @@ func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 	log.Printf("Parsed Language: %s\n", language)
 
 	// json stringify the result for the execution lambda
-	return json.Marshal(CodeProcessRequest{
+	return json.Marshal(models.CodeProcessRequest{
 		Language: language,
 		Code:     code,
 		Props:    props,
@@ -99,7 +83,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	if err := json.Unmarshal([]byte(request.Body), &body); err != nil {
 		log.Printf("Error while parsing request: %s\n", err.Error())
 		return events.APIGatewayProxyResponse{
-			StatusCode: 400,
+			StatusCode: 500,
 		}, err
 	}
 
@@ -113,7 +97,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	if err != nil {
 		log.Printf("Error while parsing language and code from request: %s\n", err.Error())
 		return events.APIGatewayProxyResponse{
-			StatusCode: 400,
+			StatusCode: 200,
 		}, err
 	}
 
@@ -126,38 +110,25 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	if err != nil {
 		log.Printf("Error while invoking code runner: %s\n", err.Error())
 		return events.APIGatewayProxyResponse{
-			StatusCode: 400,
+			StatusCode: 500,
+		}, err
+	}
+
+	res, err := json.Marshal(SlackResponse{ResponseType: "in_channel"})
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
 		}, err
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       string(output.Payload),
+		Body:       string(res),
 		StatusCode: 200,
 	}, nil
 }
 
-func importLanguageConfig(filePath string) (LanguageConfig, error) {
-	var config LanguageConfig
-
-	dir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := ioutil.ReadFile(path.Join(dir, filePath))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(data, &config); err != nil {
-		return nil, err
-	}
-
-	return config, nil
-}
-
 func main() {
-	languages, err := importLanguageConfig("languages.json")
+	languages, err := models.importLanguageConfig("languages.json")
 	if err != nil {
 		panic(err)
 	}
