@@ -128,7 +128,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 }
 
 func main() {
-	languages, err := models.importLanguageConfig("languages.json")
+	languages, err := models.ImportLanguageConfig("languages.json")
 	if err != nil {
 		panic(err)
 	}

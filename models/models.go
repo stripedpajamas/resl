@@ -24,12 +24,12 @@ type LanguageConfig map[string]LanguageProperties
 
 // CodeProcessRequest represents the payload sent to the code runner lambda
 type CodeProcessRequest struct {
-	Code     string             `json:"code"`
-	Language string             `json:"language"`
-	Props    LanguageProperties `json:"props"`
+	ResponseURL string             `json:"responseUrl"`
+	Code        string             `json:"code"`
+	Props       LanguageProperties `json:"props"`
 }
 
-func importLanguageConfig(filePath string) (models.LanguageConfig, error) {
+func ImportLanguageConfig(filePath string) (models.LanguageConfig, error) {
 	var config models.LanguageConfig
 
 	dir, err := os.Getwd()
