@@ -102,7 +102,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	input := lambdaClient.InvokeInput{
-		FunctionName:   aws.String("resl-lang"),
+		FunctionName:   aws.String("resl_slack_responder"),
 		Payload:        payload,
 		InvocationType: aws.String("event"),
 	}
