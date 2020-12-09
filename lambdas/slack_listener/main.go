@@ -113,6 +113,9 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return events.APIGatewayProxyResponse{
 			StatusCode: 200,
 			Body:       string(responseBody),
+			Headers: map[string]string{
+				"Content-Type": "application/json",
+			},
 		}, err
 	}
 
@@ -145,6 +148,9 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	return events.APIGatewayProxyResponse{
 		Body:       string(res),
 		StatusCode: 200,
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
 	}, nil
 }
 
