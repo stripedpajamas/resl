@@ -23,13 +23,13 @@ phases:
       - go mod download
       - GOOS=linux go build -o slack_listener *.go
       - cd ../../
-      - mv lambdas/run/slack_listener ./
+      - mv lambdas/slack_listener/slack_listener ./
 
       - cd lambdas/slack_responder
       - go mod download
       - GOOS=linux go build -o slack_responder *.go
       - cd ../../
-      - mv lambdas/run/slack_responder ./
+      - mv lambdas/slack_responder/slack_responder ./
 
       - aws cloudformation package --template-file template.yml --s3-bucket "resl-build-artifacts" --output-template-file outputtemplate.yml
 
