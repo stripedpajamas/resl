@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	lambdaClient "github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/stripedpajamas/resl/models"
+	"github.com/stripedpajamas/resl/slack"
 )
 
 var languageConfig models.LanguageConfig
@@ -22,11 +23,6 @@ type RequestBody struct {
 	TriggerID   string `json:"trigger_id"`
 	Text        string `json:"text"`
 	ResponseURL string `json:"response_url"`
-}
-
-// SlackResponse represents the model slack expects
-type SlackResponse struct {
-	ResponseType string `json:"response_type"`
 }
 
 func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
@@ -80,10 +76,29 @@ func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var body RequestBody
 
+	log.Printf("Request body: %s\n", request.Body)
+
 	if err := json.Unmarshal([]byte(request.Body), &body); err != nil {
 		log.Printf("Error while parsing request: %s\n", err.Error())
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
+		}, err
+	}
+
+	payload, err := getCodePayloadFromRequestBody(body)
+	if err != nil {
+		log.Printf("Error while parsing language and code from request: %s\n", err.Error())
+		responseBody, serializationErr := slack.PrivateAcknowledgement(err.Error())
+
+		if serializationErr != nil {
+			log.Printf("Failed to serialize parsing error for Slack: %s\n", err.Error())
+			return events.APIGatewayProxyResponse{
+				StatusCode: 500,
+			}, serializationErr
+		}
+		return events.APIGatewayProxyResponse{
+			StatusCode: 200,
+			Body:       string(responseBody),
 		}, err
 	}
 
@@ -92,14 +107,6 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}))
 
 	client := lambdaClient.New(sess, &aws.Config{Region: aws.String("us-west-2")})
-
-	payload, err := getCodePayloadFromRequestBody(body)
-	if err != nil {
-		log.Printf("Error while parsing language and code from request: %s\n", err.Error())
-		return events.APIGatewayProxyResponse{
-			StatusCode: 200,
-		}, err
-	}
 
 	input := lambdaClient.InvokeInput{
 		FunctionName:   aws.String("resl_slack_responder"),
@@ -114,7 +121,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		}, err
 	}
 
-	res, err := json.Marshal(SlackResponse{ResponseType: "in_channel"})
+	res, err := slack.PublicAcknowledgement()
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,

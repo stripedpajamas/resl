@@ -9,8 +9,20 @@ import (
 
 // SlackResponse contains the properties necessary to respond to a message
 type SlackResponse struct {
-	ResponseType string `json:"response_type"`
-	Text         string `json:"text"`
+	ResponseType string `json:"response_type,omitempty"`
+	Text         string `json:"text,omitempty"`
+}
+
+func PublicAcknowledgement() ([]byte, error) {
+	return json.Marshal(SlackResponse{
+		ResponseType: "in_channel",
+	})
+}
+
+func PrivateAcknowledgement(text string) ([]byte, error) {
+	return json.Marshal(SlackResponse{
+		Text: text,
+	})
 }
 
 // SendChannelResponse sends text to a response url in a channel
