@@ -42,7 +42,7 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 	client := lambdaClient.New(sess, &aws.Config{Region: aws.String("us-west-2")})
 
 	input := lambdaClient.InvokeInput{
-		FunctionName: aws.String("resl-lang"),
+		FunctionName: aws.String("resl_code_exec"),
 		Payload:      payload,
 	}
 
