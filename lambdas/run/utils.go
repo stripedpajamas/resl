@@ -28,6 +28,20 @@ func parseCode(payload *models.CodeProcessRequest) {
 	payload.Code = strings.ReplaceAll(payload.Code, "&amp;", "&")
 	payload.Code = strings.ReplaceAll(payload.Code, "&lt;", "<")
 	payload.Code = strings.ReplaceAll(payload.Code, "&gt;", ">")
+
+	code := payload.Code
+
+	i := 0
+	j := len(payload.Code) - 1
+
+	for i <= j && code[i] == '`' && code[j] == code[i] {
+		i++
+		j--
+	}
+
+	if i == 1 || i == 3 {
+		payload.Code = code[i : j+1]
+	}
 }
 
 func validateLanguage(payload models.CodeProcessRequest) (bool, error) {
