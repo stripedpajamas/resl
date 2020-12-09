@@ -46,6 +46,7 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		Payload:      payload,
 	}
 
+	log.Printf("Invoking code exec lambda...\n")
 	output, err := client.Invoke(&input)
 	if err != nil {
 		slack.SendChannelResponse(request.ResponseURL, "Sorry! Unable to setup execution environment :(")
@@ -53,6 +54,7 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		return err
 	}
 
+	log.Printf("Sending slack response...\n")
 	slack.SendChannelResponse(request.ResponseURL, wrapString(escapeString(string(output.Payload))))
 
 	return nil

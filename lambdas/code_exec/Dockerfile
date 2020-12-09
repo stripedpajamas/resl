@@ -10,10 +10,12 @@ RUN apt-get update && \
     libcurl4-openssl-dev
 
 # Copy function code
+COPY package*.json /function/
 COPY index.js /function/index.js
 
 WORKDIR /function
 
+RUN npm install
 RUN npm install aws-lambda-ric
 
 # Grab a fresh slim copy of the image to reduce the final size
