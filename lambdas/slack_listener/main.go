@@ -71,9 +71,9 @@ func getCodePayloadFromRequestBody(body RequestBody) ([]byte, error) {
 
 	// json stringify the result for the execution lambda
 	return json.Marshal(models.CodeProcessRequest{
-		Language: language,
-		Code:     code,
-		Props:    props,
+		ResponseURL: body.ResponseURL,
+		Code:        code,
+		Props:       props,
 	})
 }
 
@@ -102,16 +102,13 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	input := lambdaClient.InvokeInput{
-		FunctionName: aws.String("resl-lang"),
-		Payload:      payload,
+		FunctionName:   aws.String("resl-lang"),
+		Payload:        payload,
+		InvocationType: aws.String("event"),
 	}
 
-	output, err := client.Invoke(&input)
-	if err != nil {
-		log.Printf("Error while invoking code runner: %s\n", err.Error())
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-		}, err
+	if _, err = client.Invoke(&input); err != nil {
+		log.Printf("Error while invoking the code process lambda: %s\n", err.Error())
 	}
 
 	res, err := json.Marshal(SlackResponse{ResponseType: "in_channel"})
