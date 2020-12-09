@@ -8,6 +8,10 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_SERVER
+      - echo Logging in to Docker Hub
+      - aws s3 cp s3://resl-misc/.docker.key .docker.key
+      - docker login -u twoseventythree --password-stdin < .docker.key
+      - rm .docker.key
   build:
     commands:
       - export GIT_TAG=${CODEBUILD_WEBHOOK_HEAD_REF#refs/tags/}
