@@ -7,12 +7,12 @@ Parameters:
     Type: String
 
 Resources:
-  ReslRunApiFunction:
+  ReslSlackListenerApiFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Description: the resl edge func
-      FunctionName: 'resl-run'
-      Handler: main
+      Description: This lambda listens to Slack
+      FunctionName: 'resl_slack_listener'
+      Handler: slack_listener
       Role: !GetAtt ReslLambdaIamRole.Arn
       CodeUri: ./
       Runtime: go1.x
@@ -23,13 +23,24 @@ Resources:
           Path: /run
           Method: POST
 
-  ReslLangLambda:
+  ReslCodeExecLambda:
     Type: AWS::Serverless::Function
     Properties:
       Description: the resl lang lambda
-      FunctionName: 'resl-lang'
+      FunctionName: 'resl_code_exec'
       PackageType: Image
       ImageUri: !Ref ImageUri
+
+  ReslSlackResponderLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: This lambda calls the code execution lambda and responds to Slack
+      FunctionName: 'resl_slack_responder'
+      Handler: slack_responder
+      Role: !GetAtt ReslLambdaIamRole.Arn
+      CodeUri: ./
+      Runtime: go1.x
+      Timeout: 29
 
   ReslLambdaIamRole:
     Type: AWS::IAM::Role

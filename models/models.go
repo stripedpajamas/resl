@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-
-	"github.com/stripedpajamas/resl/models"
 )
 
 // LanguageProperties represents properties for running each supported language
@@ -29,8 +27,8 @@ type CodeProcessRequest struct {
 	Props       LanguageProperties `json:"props"`
 }
 
-func ImportLanguageConfig(filePath string) (models.LanguageConfig, error) {
-	var config models.LanguageConfig
+func ImportLanguageConfig(filePath string) (LanguageConfig, error) {
+	var config LanguageConfig
 
 	dir, err := os.Getwd()
 	if err != nil {
