@@ -64,7 +64,9 @@ Resources:
                 Action:
                   - 'lambda:InvokeFunction'
                   - 'lambda:InvokeAsync'
-                Resource: !GetAtt ReslLangLambda.Arn
+                Resource: 
+                  - !GetAtt ReslCodeExecLambda.Arn
+                  - !GetAtt ReslSlackResponderLambda.Arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
