@@ -12,12 +12,6 @@ Parameters:
     Type: String
     NoEcho: true
 
-Globals:
-  Function:
-    Environment:
-      Variables:
-        AWS_REGION: "us-west-2"
-
 Resources:
   ReslSlackListenerApiFunction:
     Type: AWS::Serverless::Function
