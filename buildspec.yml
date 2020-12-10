@@ -20,7 +20,7 @@ phases:
       - export GIT_TAG=${CODEBUILD_WEBHOOK_HEAD_REF#refs/tags/}
       - echo $GIT_TAG
       - | 
-        if [ ! -z "$GIT_TAG" ]; then
+        if [[ $GIT_TAG ~= ^[v][0-9]+[.][0-9]+[.][0-9]+$ ]]; then
           export IMAGE_URI=${IMAGE_URI_BASE}:${GIT_TAG}
 
           echo Building Docker image as ${IMAGE_URI}...
