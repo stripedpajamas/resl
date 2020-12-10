@@ -7,6 +7,7 @@ import (
 	"errors"
 	"log"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -123,10 +124,10 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	client := lambdaClient.New(sess, &aws.Config{Region: aws.String("us-west-2")})
+	client := lambdaClient.New(sess, &aws.Config{Region: aws.String(os.Getenv("awsRegion"))})
 
 	input := lambdaClient.InvokeInput{
-		FunctionName:   aws.String("resl_slack_responder"),
+		FunctionName:   aws.String(os.Getenv("slackResponderLambdaArn")),
 		Payload:        payload,
 		InvocationType: aws.String("Event"),
 	}

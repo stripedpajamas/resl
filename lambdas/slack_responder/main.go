@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -39,10 +41,10 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	client := lambdaClient.New(sess, &aws.Config{Region: aws.String("us-west-2")})
+	client := lambdaClient.New(sess, &aws.Config{Region: aws.String(os.Getenv("awsRegion"))})
 
 	input := lambdaClient.InvokeInput{
-		FunctionName: aws.String("resl_code_exec"),
+		FunctionName: aws.String(os.Getenv("codeExecLambdaArn")),
 		Payload:      payload,
 	}
 
@@ -53,6 +55,8 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		log.Printf("Error while invoking code runner: %s\n", err.Error())
 		return err
 	}
+
+	fmt.Println(output.Payload)
 
 	log.Printf("Sending slack response...\n")
 	slack.SendChannelResponse(request.ResponseURL, wrapString(escapeString(string(output.Payload))))

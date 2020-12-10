@@ -6,6 +6,15 @@ Parameters:
   ImageUri:
     Type: String
 
+Globals:
+  Function:
+    Environment:
+      Variables:
+        awsRegion: "us-west-2"
+        slackResponderLambdaArn: !GetAtt ReslSlackResponderLambda.Arn
+        slackListenerLambdaArn: !GetAtt ReslSlackListenerApiFunction.Arn
+        codeExecLambdaArn: !GetAtt ReslCodeExecLambda.Arn
+
 Resources:
   ReslSlackListenerApiFunction:
     Type: AWS::Serverless::Function
