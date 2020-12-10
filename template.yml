@@ -16,10 +16,7 @@ Globals:
   Function:
     Environment:
       Variables:
-        awsRegion: "us-west-2"
-        slackResponderLambdaArn: !GetAtt ReslSlackResponderLambda.Arn
-        slackListenerLambdaArn: !GetAtt ReslSlackListenerApiFunction.Arn
-        codeExecLambdaArn: !GetAtt ReslCodeExecLambda.Arn
+        AWS_REGION: "us-west-2"
 
 Resources:
   ReslSlackListenerApiFunction:
@@ -34,6 +31,7 @@ Resources:
       Timeout: 29
       Environment:
         Variables:
+          SLACK_RESP_ARN: !GetAtt ReslSlackResponderLambda.Arn
           SLACK_TOKEN: !Ref SlackToken
           SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
       Events:
@@ -53,6 +51,9 @@ Resources:
   ReslSlackResponderLambda:
     Type: AWS::Serverless::Function
     Properties:
+      Environment:
+        Variables:
+          CODE_EXEC_LAMBDA_ARN: !GetAtt ReslCodeExecLambda.Arn
       Description: This lambda calls the code execution lambda and responds to Slack
       FunctionName: 'resl_slack_responder'
       Handler: slack_responder

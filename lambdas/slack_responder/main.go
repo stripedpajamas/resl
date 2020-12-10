@@ -41,10 +41,10 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	client := lambdaClient.New(sess, &aws.Config{Region: aws.String(os.Getenv("awsRegion"))})
+	client := lambdaClient.New(sess, &aws.Config{Region: aws.String(os.Getenv("AWS_REGION"))})
 
 	input := lambdaClient.InvokeInput{
-		FunctionName: aws.String(os.Getenv("codeExecLambdaArn")),
+		FunctionName: aws.String(os.Getenv("CODE_EXEC_LAMBDA_ARN")),
 		Payload:      payload,
 	}
 

@@ -124,10 +124,10 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	client := lambdaClient.New(sess, &aws.Config{Region: aws.String(os.Getenv("awsRegion"))})
+	client := lambdaClient.New(sess, &aws.Config{Region: aws.String(os.Getenv("AWS_REGION"))})
 
 	input := lambdaClient.InvokeInput{
-		FunctionName:   aws.String(os.Getenv("slackResponderLambdaArn")),
+		FunctionName:   aws.String(os.Getenv("SLACK_RESP_ARN")),
 		Payload:        payload,
 		InvocationType: aws.String("Event"),
 	}
