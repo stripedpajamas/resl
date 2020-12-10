@@ -56,7 +56,7 @@ func getCodePayloadFromRequestBody(bodyValues url.Values) ([]byte, error) {
 	i := 0
 	j := len(code) - 1
 
-	for i <= j && code[i] == '`' && code[j] == code[i] {
+	for i <= j && code[i] == code[j] && code[i] == '`' {
 		i++
 		j--
 	}
@@ -163,5 +163,5 @@ func main() {
 
 	languageConfig = languages
 
-	lambda.Start(handleRequest)
+	lambda.Start(authorizeRequest(handleRequest))
 }
