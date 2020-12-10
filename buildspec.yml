@@ -17,13 +17,18 @@ phases:
   build:
     commands:
       - export GIT_TAG=${CODEBUILD_WEBHOOK_HEAD_REF#refs/tags/}
-      - export IMAGE_URI=${IMAGE_URI_BASE}:${GIT_TAG}
+      - |
+        if [ -z "$GIT_TAG" ]; then
+          export IMAGE_URI=${IMAGE_URI_BASE}:${GIT_TAG}
 
-      - echo Building Docker image as ${IMAGE_URI}...
-      - docker build -t ${IMAGE_URI} lambdas/code_exec
+          echo Building Docker image as ${IMAGE_URI}...
+          docker build -t ${IMAGE_URI} lambdas/code_exec
 
-      - echo Pushing Docker image...
-      - docker push ${IMAGE_URI}
+          echo Pushing Docker image...
+          docker push ${IMAGE_URI}
+        else
+          export IMAGE_URI=${IMAGE_URI_BASE}:latest
+        fi
 
       - cd lambdas/slack_listener
       - go mod download
