@@ -3,3 +3,4 @@ _testing.js
 lambdas/slack_listener/slack_listener
 lambdas/slack_responder/slack_responder
 
+.slack*
