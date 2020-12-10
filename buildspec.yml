@@ -2,6 +2,7 @@ version: 0.2
 
 env:
   shell: bash
+  git-credential-helper: yes
 
 phases:
   pre_build:
@@ -27,7 +28,13 @@ phases:
           echo Pushing Docker image...
           docker push ${IMAGE_URI}
         else
-          export IMAGE_URI=${IMAGE_URI_BASE}:latest
+          echo Cloning RESL repo to determine latest tag
+          git clone https://github.com/stripedpajamas/resl.git
+          cd resl
+          export LATEST_COMMIT=$(git rev-list --tags --max-count=1)
+          export LATEST_TAG=$(git describe --tags ${LATEST_COMMIT})
+          echo "Latest Tag is: ${LATEST_TAG}"
+          export IMAGE_URI=${IMAGE_URI_BASE}:${LATEST_TAG}
         fi
 
       - cd lambdas/slack_listener
