@@ -12,10 +12,10 @@ exports.handler = async ({ code, props }) => {
 
   const filePath = createFilePath('/tmp', extension)
   await writeCodeFile(filePath, code)
-  const out = await runCode(runCmd, [filePath])
+  const output = await runCode(runCmd, [filePath])
   await deleteCodeFile(filePath)
 
-  return out
+  return { output }
 }
 
 const createFilePath = (folder, extension) => {

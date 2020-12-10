@@ -17,6 +17,10 @@ import (
 	"github.com/stripedpajamas/resl/slack"
 )
 
+type CodeOutput struct {
+	Output string `json:"output"`
+}
+
 // replaces backticks with \`
 func escapeString(s string) string {
 	return strings.ReplaceAll(s, "`", "\\`")
@@ -56,7 +60,15 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		return err
 	}
 
-	fmt.Println(output.Payload)
+	var codeOutput CodeOutput
+	err = json.Unmarshal(output.Payload, &codeOutput)
+	if err != nil {
+		slack.SendChannelResponse(request.ResponseURL, "Sorry! Unable to setup execution environment :(")
+		log.Printf("Error while deserializing code output: %s\n", err.Error())
+		return err
+	}
+
+	fmt.Println(codeOutput.Output)
 
 	log.Printf("Sending slack response...\n")
 	slack.SendChannelResponse(request.ResponseURL, wrapString(escapeString(string(output.Payload))))
