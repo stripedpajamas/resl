@@ -44,11 +44,3 @@ const runCode = async (cmd, args) => {
   return output
 }
 
-exports.handler({
-	code: 'for (let i = 0; i < 5; i++) { console.log(i) }',
-	props: {
-		extension: 'js',
-		runCmd: 'node'
-	}
-}).then(console.log).catch(console.error)
-

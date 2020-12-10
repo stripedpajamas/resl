@@ -5,6 +5,12 @@ Description: AWS API Gateway with a Lambda Integration
 Parameters:
   ImageUri:
     Type: String
+  SlackToken:
+    Type: String
+    NoEcho: true
+  SlackSigningSecret:
+    Type: String
+    NoEcho: true
 
 Globals:
   Function:
@@ -26,6 +32,10 @@ Resources:
       CodeUri: ./
       Runtime: go1.x
       Timeout: 29
+      Environment:
+        Variables:
+          SLACK_TOKEN: !Ref SlackToken
+          SLACK_SIGNING_SECRET: !Ref SlackSigningSecret
       Events:
         ApiEvent:
           Type: HttpApi

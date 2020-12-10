@@ -12,6 +12,8 @@ phases:
       - aws s3 cp s3://resl-misc/.docker.key .docker.key
       - docker login -u twoseventythree --password-stdin < .docker.key
       - rm .docker.key
+      - aws s3 cp s3://resl-misc/.slack_token .slack_token
+      - aws s3 cp s3://resl-misc/.slack_signing_secret .slack_signing_secret
   build:
     commands:
       - export GIT_TAG=${CODEBUILD_WEBHOOK_HEAD_REF#refs/tags/}
@@ -37,10 +39,13 @@ phases:
 
       - aws cloudformation package --template-file template.yml --s3-bucket "resl-build-artifacts" --output-template-file outputtemplate.yml
 
+      - export SLACK_TOKEN=$(cat .slack_token)
+      - export SLACK_SIGNING_SECRET=$(cat .slack_signing_secret)
+
       - echo Deploying project...
       - |
         aws cloudformation deploy \
           --stack-name $PROJECT_NAME \
           --template-file outputtemplate.yml \
-          --parameter-overrides ImageUri=${IMAGE_URI} \
+          --parameter-overrides ImageUri=${IMAGE_URI} SlackToken=${SLACK_TOKEN} SlackSigningSecret=${SLACK_SIGNING_SECRET} \
           --capabilities CAPABILITY_IAM
