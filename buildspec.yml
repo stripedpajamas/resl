@@ -35,6 +35,7 @@ phases:
           export LATEST_TAG=$(git describe --tags ${LATEST_COMMIT})
           echo "Latest Tag is: ${LATEST_TAG}"
           export IMAGE_URI=${IMAGE_URI_BASE}:${LATEST_TAG}
+          cd ..
         fi
 
       - cd lambdas/slack_listener
