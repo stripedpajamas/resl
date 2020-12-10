@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -41,7 +42,15 @@ func authorizeRequest(next lambdaHandlerFunc) lambdaHandlerFunc {
 			}, nil
 		}
 
-		validationStr := fmt.Sprintf("v0:%s:%s", timestamp, request.Body)
+		bodyStr, err := base64.StdEncoding.DecodeString(request.Body)
+		if err != nil {
+			log.Printf("Failed to parse body: %s\n", err.Error())
+			return events.APIGatewayProxyResponse{
+				StatusCode: 500,
+			}, err
+		}
+
+		validationStr := fmt.Sprintf("v0:%s:%s", timestamp, bodyStr)
 		secret := os.Getenv("SLACK_SIGNING_SECRET")
 
 		hash := hmac.New(sha256.New, []byte(secret))
