@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -20,15 +21,15 @@ func authorizeRequest(next lambdaHandlerFunc) lambdaHandlerFunc {
 		timestamp := request.Headers["x-slack-request-timestamp"]
 		signature := request.Headers["x-slack-signature"]
 
-		now := time.Now()
-		t, err := time.Parse(time.RFC3339, timestamp)
+		now := time.Now().Unix()
+		t, err := strconv.ParseInt(timestamp, 10, 64)
 		if err != nil {
 			return events.APIGatewayProxyResponse{
 				StatusCode: 500,
 			}, err
 		}
 
-		if math.Abs(float64(now.Sub(t).Milliseconds())) > 5000.0 {
+		if math.Abs(float64(now)-float64(t)) > (60.0 * 5.0) {
 			return events.APIGatewayProxyResponse{
 				StatusCode: 401,
 			}, nil
