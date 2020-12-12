@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const slackViewsOpenUrl = "https://slack.com/api/views.open"
+const slackViewsOpenURL = "https://slack.com/api/views.open"
 
 // SlackResponse contains the properties necessary to respond to a message
 type SlackResponse struct {
@@ -73,7 +73,7 @@ func SendModal(triggerID, languageName, placeholder string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", slackViewsOpenUrl, bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest("POST", slackViewsOpenURL, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return err
 	}

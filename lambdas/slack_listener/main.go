@@ -15,21 +15,23 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	lambdaClient "github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/gorilla/schema"
 	"github.com/stripedpajamas/resl/models"
 	"github.com/stripedpajamas/resl/slack"
 )
 
 var languageConfig models.LanguageConfig
 
-func getCodePayloadFromRequestBody(bodyValues url.Values) ([]byte, error) {
-	if _, found := bodyValues["text"]; !found {
-		return []byte{}, errors.New("failed to parse language and code: no text")
-	}
-	if _, found := bodyValues["response_url"]; !found {
-		return []byte{}, errors.New("failed to parse language and code: no response url")
-	}
+var decoder = schema.NewDecoder()
 
-	trimmedText := strings.Trim(bodyValues["text"][0], " ")
+// RequestBody represents the incoming request body
+type RequestBody struct {
+	Text        string `schema:"text"`
+	ResponseURL string `schema:"response_url"`
+}
+
+func getCodePayloadFromRequestBody(requestBody RequestBody) ([]byte, error) {
+	trimmedText := strings.Trim(requestBody.Text, " ")
 	spaceIdx := strings.IndexRune(trimmedText, ' ')
 
 	if spaceIdx < 0 {
@@ -41,11 +43,11 @@ func getCodePayloadFromRequestBody(bodyValues url.Values) ([]byte, error) {
 
 	// confirm this language is supported
 	var props models.LanguageProperties
-	if langProps, found := languageConfig[language]; !found {
+	if _, found := languageConfig[language]; !found {
 		return []byte{}, errors.New("language not supported")
-	} else {
-		props = langProps
 	}
+
+	props = languageConfig[language]
 
 	// clean up slack's auto replacements
 	code = strings.ReplaceAll(code, "&amp;", "&")
@@ -70,29 +72,38 @@ func getCodePayloadFromRequestBody(bodyValues url.Values) ([]byte, error) {
 
 	// json stringify the result for the execution lambda
 	return json.Marshal(models.CodeProcessRequest{
-		ResponseURL: bodyValues["response_url"][0],
+		ResponseURL: requestBody.ResponseURL,
 		Code:        code,
 		Props:       props,
 	})
 }
 
-func parseFormData(body string) (url.Values, error) {
-	form, err := base64.StdEncoding.DecodeString(body)
+func parseFormData(body string) (RequestBody, error) {
+	decoded, err := base64.StdEncoding.DecodeString(body)
 	if err != nil {
-		return nil, err
-	}
-	values, err := url.ParseQuery(string(form))
-	if err != nil {
-		return nil, err
+		return RequestBody{}, err
 	}
 
-	return values, nil
+	form, err := url.ParseQuery(string(decoded))
+	if err != nil {
+		return RequestBody{}, err
+	}
+
+	log.Printf("Request form %s\n", form)
+
+	var payload RequestBody
+	err = decoder.Decode(&payload, form)
+	if err != nil {
+		return RequestBody{}, err
+	}
+
+	return payload, nil
 }
 
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("Request body: %s\n", request.Body)
 
-	bodyValues, err := parseFormData(request.Body)
+	body, err := parseFormData(request.Body)
 	if err != nil {
 		log.Printf("Error while parsing request: %s\n", err.Error())
 		return events.APIGatewayProxyResponse{
@@ -100,7 +111,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		}, err
 	}
 
-	payload, err := getCodePayloadFromRequestBody(bodyValues)
+	payload, err := getCodePayloadFromRequestBody(body)
 	if err != nil {
 		log.Printf("Error while parsing language and code from request: %s\n", err.Error())
 		responseBody, serializationErr := slack.PrivateAcknowledgement(err.Error())

@@ -25,8 +25,10 @@ type CodeProcessRequest struct {
 	ResponseURL string             `json:"responseUrl"`
 	Code        string             `json:"code"`
 	Props       LanguageProperties `json:"props"`
+	User        string             `json:"user"`
 }
 
+// ImportLanguageConfig reads and parses the languages configuration json file
 func ImportLanguageConfig(filePath string) (LanguageConfig, error) {
 	var config LanguageConfig
 
