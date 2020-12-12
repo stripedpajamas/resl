@@ -24,13 +24,24 @@ var languageConfig models.LanguageConfig
 
 var decoder = schema.NewDecoder()
 
-// RequestBody represents the incoming request body
-type RequestBody struct {
-	Text        string `schema:"text"`
-	ResponseURL string `schema:"response_url"`
+// SlackRequestBody represents the incoming request body from Slack
+type SlackRequestBody struct {
+	APIAppID            string `schema:"api_app_id"`
+	ChannelID           string `schema:"channel_id"`
+	ChannelName         string `schema:"channel_name"`
+	AppCommand          string `schema:"command"`
+	IsEnterpriseInstall bool   `schema:"is_enterprise_install"`
+	ResponseURL         string `schema:"response_url"`
+	TeamDomain          string `schema:"team_domain"`
+	TeamID              string `schema:"team_id"`
+	Text                string `schema:"text"`
+	Token               string `schema:"token"`
+	TriggerID           string `schema:"trigger_id"`
+	UserID              string `schema:"user_id"`
+	UserName            string `schema:"user_name"`
 }
 
-func getCodePayloadFromRequestBody(requestBody RequestBody) ([]byte, error) {
+func getCodePayloadFromRequestBody(requestBody SlackRequestBody) ([]byte, error) {
 	trimmedText := strings.Trim(requestBody.Text, " ")
 	spaceIdx := strings.IndexRune(trimmedText, ' ')
 
@@ -78,29 +89,32 @@ func getCodePayloadFromRequestBody(requestBody RequestBody) ([]byte, error) {
 	})
 }
 
-func parseFormData(body string) (RequestBody, error) {
+func parseFormData(body string) (SlackRequestBody, error) {
 	decoded, err := base64.StdEncoding.DecodeString(body)
 	if err != nil {
-		return RequestBody{}, err
+		return SlackRequestBody{}, err
 	}
 
 	form, err := url.ParseQuery(string(decoded))
 	if err != nil {
-		return RequestBody{}, err
+		return SlackRequestBody{}, err
 	}
 
 	log.Printf("Request form %s\n", form)
 
-	var payload RequestBody
+	var payload SlackRequestBody
 	err = decoder.Decode(&payload, form)
 	if err != nil {
-		return RequestBody{}, err
+		return SlackRequestBody{}, err
 	}
 
 	return payload, nil
 }
 
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	headers := request.Headers
+	log.Printf("Headers %s\n", headers)
+
 	log.Printf("Request body: %s\n", request.Body)
 
 	body, err := parseFormData(request.Body)
