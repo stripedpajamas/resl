@@ -73,7 +73,7 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 	log.Printf("Sending slack response...\n")
 
 	if codeOutput.Output == "" {
-		codeOutput.Output == "[No output]"
+		codeOutput.Output = "[No output]"
 	}
 
 	slack.SendChannelResponse(request.ResponseURL, wrapString(escapeString(string(codeOutput.Output))))
