@@ -41,23 +41,30 @@ type SlackFormRequestBody struct {
 	UserName            string `schema:"user_name"`
 }
 
+type SlackModalRequestBody struct {
+	Type string `json:"type"`
+}
+
 // RequestBodyParser reprsents a function type for parsing the incoming request body
 type RequestBodyParser func(body string) (SlackFormRequestBody, error)
 
-func getCodePayloadFromRequestBody(requestBody SlackFormRequestBody) ([]byte, error) {
-	trimmedText := strings.Trim(requestBody.Text, " ")
+func parseText(text string) (string, string) {
+	trimmedText := strings.Trim(text, " ")
 	spaceIdx := strings.IndexRune(trimmedText, ' ')
 
 	if spaceIdx < 0 {
-		return []byte{}, errors.New("failed to parse language and code")
+		return trimmedText, ""
 	}
 
-	language := trimmedText[0:spaceIdx]
-	code := trimmedText[spaceIdx+1:]
+	return trimmedText[0:spaceIdx], trimmedText[spaceIdx+1:]
+}
+
+func getCodePayloadFromRequestBody(requestBody SlackFormRequestBody) (models.CodeProcessRequest, error) {
+	language, code := parseText(requestBody.Text)
 
 	props, found := languageConfig[language]
 	if !found {
-		return []byte{}, errors.New("language not supported")
+		return models.CodeProcessRequest{}, errors.New("language not supported")
 	}
 
 	// clean up slack's auto replacements
@@ -82,11 +89,11 @@ func getCodePayloadFromRequestBody(requestBody SlackFormRequestBody) ([]byte, er
 	log.Printf("Parsed Language: %s\n", language)
 
 	// json stringify the result for the execution lambda
-	return json.Marshal(models.CodeProcessRequest{
+	return models.CodeProcessRequest{
 		ResponseURL: requestBody.ResponseURL,
 		Code:        code,
 		Props:       props,
-	})
+	}, nil
 }
 
 func parseFormRequest(body string) (SlackFormRequestBody, error) {
@@ -154,7 +161,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		}, err
 	}
 
-	payload, err := getCodePayloadFromRequestBody(body)
+	codeProcessRequest, err := getCodePayloadFromRequestBody(body)
 	if err != nil {
 		log.Printf("Error while parsing language and code from request: %s\n", err.Error())
 		responseBody, serializationErr := slack.PrivateAcknowledgement(err.Error())
@@ -172,6 +179,23 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 				"Content-Type": "application/json",
 			},
 		}, nil
+	}
+
+	// fire a modal back since no code was there
+	if codeProcessRequest.Code == "" {
+		slack.SendModal(body.TriggerID, codeProcessRequest.Props.Name, codeProcessRequest.Props.Placeholder)
+
+		return events.APIGatewayProxyResponse{
+			StatusCode: 200,
+		}, nil
+	}
+
+	payload, err := json.Marshal(codeProcessRequest)
+	if err != nil {
+		log.Printf("Failed to serialize parsing error for Slack: %s\n", err.Error())
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+		}, err
 	}
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -210,6 +234,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 }
 
 func main() {
+	decoder.IgnoreUnknownKeys(true)
 	languages, err := models.ImportLanguageConfig("languages.json")
 	if err != nil {
 		panic(err)

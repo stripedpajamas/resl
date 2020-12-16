@@ -22,12 +22,17 @@ github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeV
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd0=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+github.com/stripedpajamas/resl v0.3.0 h1:axx+0Os4zYYUuTxDy0+zg2wj0iOyGaNERoq+NCDjyLg=
 github.com/stripedpajamas/resl/models v0.0.0-20201209182808-2448edc8eac0 h1:mOGohyn7FZLsPAbRLJzeeGw9JRras2RYHQOiVRXRM90=
 github.com/stripedpajamas/resl/models v0.0.0-20201209182808-2448edc8eac0/go.mod h1:k1L0ietgJ5ctnSET5HRbsm7F2yf3Xd9a0E9zEOVuib4=
+github.com/stripedpajamas/resl/models v0.0.0-20201216051105-60e7279e12ae h1:84+DTPhGK1GbUhZ7DF5Wbv+6zHdNlqm5a2ezlBa7NXg=
+github.com/stripedpajamas/resl/models v0.0.0-20201216051105-60e7279e12ae/go.mod h1:k1L0ietgJ5ctnSET5HRbsm7F2yf3Xd9a0E9zEOVuib4=
 github.com/stripedpajamas/resl/slack v0.0.0-20201209175709-ea2ddbf409fa h1:5y21YBvXEr742H2we3i/DdgS9n2kRGcqvQxWyHcHB5c=
 github.com/stripedpajamas/resl/slack v0.0.0-20201209175709-ea2ddbf409fa/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
 github.com/stripedpajamas/resl/slack v0.0.0-20201209182808-2448edc8eac0 h1:b7UOyhSKCmhFjuqqdJ+vTjJNNieZYlNSnr3+meBDBic=
 github.com/stripedpajamas/resl/slack v0.0.0-20201209182808-2448edc8eac0/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
+github.com/stripedpajamas/resl/slack v0.0.0-20201216051105-60e7279e12ae h1:o51ftWSyEDwABjGli2LGsEhaqSnyXYhRrMM/pQXmSac=
+github.com/stripedpajamas/resl/slack v0.0.0-20201216051105-60e7279e12ae/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
 github.com/urfave/cli/v2 v2.2.0/go.mod h1:SE9GqnLQmjVa0iPEY0f1w3ygNIYcIJ0OKPMoW2caLfQ=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
