@@ -1,36 +1,36 @@
 package slack
 
 type ViewOptions struct {
-	Type  string `json:"type"`
-	Text  string `json:"text"`
+	Type  string `json:"type,omitempty"`
+	Text  string `json:"text,omitempty"`
 	Emoji bool   `json:"emoji,omitempty"`
 }
 
 type Element struct {
-	ActionID                     string      `json:"action_id"`
-	Type                         string      `json:"type"`
-	DefaultToCurrentConversation bool        `json:"default_to_current_conversation"`
-	ResponseURLEnabled           bool        `json:"response_url_enabled"`
-	Multiline                    bool        `json:"multiline"`
-	Placeholder                  ViewOptions `json:"placeholder"`
+	ActionID                     string      `json:"action_id,omitempty"`
+	Type                         string      `json:"type,omitempty"`
+	DefaultToCurrentConversation bool        `json:"default_to_current_conversation,omitempty"`
+	ResponseURLEnabled           bool        `json:"response_url_enabled,omitempty"`
+	Multiline                    bool        `json:"multiline,omitempty"`
+	Placeholder                  ViewOptions `json:"placeholder,omitempty"`
 }
 
 type Block struct {
-	BlockID  string      `json:"block_id"`
-	Type     string      `json:"type"`
-	Element  Element     `json:"element"`
-	Label    ViewOptions `json:"label"`
-	Hint     ViewOptions `json:"hint"`
-	Optional bool        `json:"optional"`
+	BlockID  string      `json:"block_id,omitempty"`
+	Type     string      `json:"type,omitempty"`
+	Element  Element     `json:"element,omitempty"`
+	Label    ViewOptions `json:"label,omitempty"`
+	Hint     ViewOptions `json:"hint,omitempty"`
+	Optional bool        `json:"optional,omitempty"`
 }
 
 type ModalDefinition struct {
-	Type            string      `json:"type"`
-	Title           ViewOptions `json:"title"`
-	Submit          ViewOptions `json:"submit"`
-	Close           ViewOptions `json:"close"`
-	PrivateMetadata string      `json:"private_metadata"`
-	Blocks          []Block     `json:"blocks"`
+	Type            string      `json:"type,omitempty"`
+	Title           ViewOptions `json:"title,omitempty"`
+	Submit          ViewOptions `json:"submit,omitempty"`
+	Close           ViewOptions `json:"close,omitempty"`
+	PrivateMetadata string      `json:"private_metadata,omitempty"`
+	Blocks          []Block     `json:"blocks,omitempty"`
 }
 
 // GenerateRESLModal returns a payload that contains a language-specific
