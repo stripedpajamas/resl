@@ -25,6 +25,8 @@ github.com/stripedpajamas/resl/slack v0.0.0-20201216055245-644bd3f4e6c0 h1:eEjVH
 github.com/stripedpajamas/resl/slack v0.0.0-20201216055245-644bd3f4e6c0/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
 github.com/stripedpajamas/resl/slack v0.0.0-20201216060300-568ae751e16d h1:C7aXOBFUbN5BoaMSYwoZlCOQjBfLnZpel9aDUwKFgEg=
 github.com/stripedpajamas/resl/slack v0.0.0-20201216060300-568ae751e16d/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
+github.com/stripedpajamas/resl/slack v0.0.0-20201216170127-055fafc2cf8d h1:Ek1kKX49RxBT6/t0A1+vjzbuOZZ5QcW0YAFIQWPMI4c=
+github.com/stripedpajamas/resl/slack v0.0.0-20201216170127-055fafc2cf8d/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
 github.com/urfave/cli/v2 v2.2.0/go.mod h1:SE9GqnLQmjVa0iPEY0f1w3ygNIYcIJ0OKPMoW2caLfQ=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
