@@ -3,6 +3,7 @@ package slack
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"os"
 )
@@ -64,6 +65,7 @@ func SendModal(triggerID, languageName, placeholder string) error {
 	client := &http.Client{}
 
 	authToken := os.Getenv("SLACK_TOKEN")
+	log.Printf("Auth token: %s\n", authToken)
 
 	reqBody, err := json.Marshal(SlackModal{
 		TriggerID: triggerID,
@@ -72,6 +74,7 @@ func SendModal(triggerID, languageName, placeholder string) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("Modal request body: %s\n", string(reqBody))
 
 	req, err := http.NewRequest("POST", slackViewsOpenURL, bytes.NewBuffer(reqBody))
 	if err != nil {
@@ -85,9 +88,14 @@ func SendModal(triggerID, languageName, placeholder string) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
-	// we don't care about slack's response
-	resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Slack response: %s\n", string(body))
 
 	return nil
 }
