@@ -22,7 +22,7 @@ Resources:
       Role: !GetAtt ReslSlackListenerLambdaIamRole.Arn
       CodeUri: ./
       Runtime: go1.x
-      Timeout: 29
+      Timeout: 30
       Environment:
         Variables:
           SLACK_RESP_ARN: !GetAtt ReslSlackResponderLambda.Arn
@@ -41,6 +41,7 @@ Resources:
       FunctionName: 'resl_code_exec'
       PackageType: Image
       ImageUri: !Ref ImageUri
+      Timeout: 15
 
   ReslSlackResponderLambda:
     Type: AWS::Serverless::Function
@@ -54,7 +55,7 @@ Resources:
       Role: !GetAtt ReslSlackResponderLambdaIamRole.Arn
       CodeUri: ./
       Runtime: go1.x
-      Timeout: 29
+      Timeout: 30
 
   ReslSlackResponderLambdaIamRole:
     Type: AWS::IAM::Role

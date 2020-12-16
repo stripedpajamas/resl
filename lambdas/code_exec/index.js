@@ -13,16 +13,10 @@ exports.handler = async ({ code, props }) => {
   const filePath = createFilePath('/tmp', extension)
   await writeCodeFile(filePath, code)
 
-  let output
+	const output = await runCode(runCmd, [filePath])
+	await deleteCodeFile(filePath)
 
-  try {
-    output = await runCode(runCmd, [filePath])
-  } catch (err) {
-    output = err.all
-  }
-  
-  await deleteCodeFile(filePath)
-  return { output }
+	return output
 }
 
 const createFilePath = (folder, extension) => {
@@ -46,7 +40,25 @@ const deleteCodeFile = async (filePath) => {
 const runCode = async (cmd, args) => {
   console.log('Running Code')
 
-	const { all: output } = await execa(cmd, args, { all: true })
+	const subprocess = execa(cmd, args, { all: true })
 
-  return output
+	const timeout = setTimeout(() => {
+		subprocess.kill('SIGTERM', {
+			forceKillAfterTimeout: 10000
+		});
+	}, 8000);
+
+  try {
+		const { all: output } = await subprocess
+		clearTimeout(timeout)
+
+		return { output }
+  } catch (err) {
+		if (err.killed || err.isCanceled) {
+			return { output: 'Execution timed out' }
+		}
+
+		return { output: err.all }
+	}
 }
+
