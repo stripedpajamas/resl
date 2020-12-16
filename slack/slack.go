@@ -66,7 +66,6 @@ func SendModal(triggerID, languageName, placeholder string) error {
 	client := &http.Client{}
 
 	authToken := os.Getenv("SLACK_TOKEN")
-	log.Printf("Auth token: %s\n", authToken)
 
 	reqBody, err := json.Marshal(SlackModal{
 		TriggerID: triggerID,
