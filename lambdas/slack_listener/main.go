@@ -183,7 +183,14 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	// fire a modal back since no code was there
 	if codeProcessRequest.Code == "" {
-		slack.SendModal(body.TriggerID, codeProcessRequest.Props.Name, codeProcessRequest.Props.Placeholder)
+		err = slack.SendModal(body.TriggerID, codeProcessRequest.Props.Name, codeProcessRequest.Props.Placeholder)
+
+		if err != nil {
+			log.Printf("Failed to send modal: %s\n", err.Error())
+			return events.APIGatewayProxyResponse{
+				StatusCode: 500,
+			}, err
+		}
 
 		return events.APIGatewayProxyResponse{
 			StatusCode: 200,
