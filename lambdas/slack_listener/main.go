@@ -24,8 +24,8 @@ var languageConfig models.LanguageConfig
 
 var decoder = schema.NewDecoder()
 
-// SlackRequestBody represents the incoming request body from Slack
-type SlackRequestBody struct {
+// SlackFormRequestBody represents the incoming request body from Slack
+type SlackFormRequestBody struct {
 	APIAppID            string `schema:"api_app_id"`
 	ChannelID           string `schema:"channel_id"`
 	ChannelName         string `schema:"channel_name"`
@@ -41,7 +41,10 @@ type SlackRequestBody struct {
 	UserName            string `schema:"user_name"`
 }
 
-func getCodePayloadFromRequestBody(requestBody SlackRequestBody) ([]byte, error) {
+// RequestBodyParser reprsents a function type for parsing the incoming request body
+type RequestBodyParser func(body string) (SlackFormRequestBody, error)
+
+func getCodePayloadFromRequestBody(requestBody SlackFormRequestBody) ([]byte, error) {
 	trimmedText := strings.Trim(requestBody.Text, " ")
 	spaceIdx := strings.IndexRune(trimmedText, ' ')
 
@@ -52,13 +55,10 @@ func getCodePayloadFromRequestBody(requestBody SlackRequestBody) ([]byte, error)
 	language := trimmedText[0:spaceIdx]
 	code := trimmedText[spaceIdx+1:]
 
-	// confirm this language is supported
-	var props models.LanguageProperties
-	if _, found := languageConfig[language]; !found {
+	props, found := languageConfig[language]
+	if !found {
 		return []byte{}, errors.New("language not supported")
 	}
-
-	props = languageConfig[language]
 
 	// clean up slack's auto replacements
 	code = strings.ReplaceAll(code, "&amp;", "&")
@@ -89,35 +89,64 @@ func getCodePayloadFromRequestBody(requestBody SlackRequestBody) ([]byte, error)
 	})
 }
 
-func parseFormData(body string) (SlackRequestBody, error) {
+func parseFormRequest(body string) (SlackFormRequestBody, error) {
 	decoded, err := base64.StdEncoding.DecodeString(body)
 	if err != nil {
-		return SlackRequestBody{}, err
+		return SlackFormRequestBody{}, err
 	}
 
 	form, err := url.ParseQuery(string(decoded))
 	if err != nil {
-		return SlackRequestBody{}, err
+		return SlackFormRequestBody{}, err
 	}
 
 	log.Printf("Request form %s\n", form)
 
-	var payload SlackRequestBody
+	var payload SlackFormRequestBody
 	err = decoder.Decode(&payload, form)
 	if err != nil {
-		return SlackRequestBody{}, err
+		return SlackFormRequestBody{}, err
 	}
 
 	return payload, nil
 }
 
+func parseJSONRequest(body string) (SlackFormRequestBody, error) {
+	var payload SlackFormRequestBody
+
+	if err := json.Unmarshal([]byte(body), &payload); err != nil {
+		return SlackFormRequestBody{}, err
+	}
+
+	return payload, nil
+}
+
+var contentTypeParseOperationMap = map[string]RequestBodyParser{
+	"application/x-www-form-urlencoded": parseFormRequest,
+	"application/json":                  parseJSONRequest,
+}
+
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	headers := request.Headers
-	log.Printf("Headers %s\n", headers)
+	var contentType string
+	var parseRequestBody RequestBodyParser
+
+	contentType, ok := headers["content-type"]
+	if !ok {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+		}, errors.New("Missing content Type")
+	}
+
+	parseRequestBody, ok = contentTypeParseOperationMap[contentType]
+	if !ok {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+		}, errors.New("Unrecognized Content Type")
+	}
 
 	log.Printf("Request body: %s\n", request.Body)
-
-	body, err := parseFormData(request.Body)
+	body, err := parseRequestBody(request.Body)
 	if err != nil {
 		log.Printf("Error while parsing request: %s\n", err.Error())
 		return events.APIGatewayProxyResponse{
