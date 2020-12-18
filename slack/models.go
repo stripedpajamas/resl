@@ -24,14 +24,20 @@ type ViewOptions struct {
 	Emoji bool   `json:"emoji,omitempty"`
 }
 
+type SelectOption struct {
+	Text  ViewOptions `json:"text,omitempty"`
+	Value string      `json:"value,omitempty"`
+}
+
 // Element represents an element inside the modal blocks
 type Element struct {
-	ActionID                     string       `json:"action_id,omitempty"`
-	Type                         string       `json:"type,omitempty"`
-	DefaultToCurrentConversation bool         `json:"default_to_current_conversation,omitempty"`
-	ResponseURLEnabled           bool         `json:"response_url_enabled,omitempty"`
-	Multiline                    bool         `json:"multiline,omitempty"`
-	Placeholder                  *ViewOptions `json:"placeholder,omitempty"`
+	ActionID                     string         `json:"action_id,omitempty"`
+	Type                         string         `json:"type,omitempty"`
+	DefaultToCurrentConversation bool           `json:"default_to_current_conversation,omitempty"`
+	ResponseURLEnabled           bool           `json:"response_url_enabled,omitempty"`
+	Multiline                    bool           `json:"multiline,omitempty"`
+	Placeholder                  *ViewOptions   `json:"placeholder,omitempty"`
+	Options                      []SelectOption `json:"options,omitempty"`
 }
 
 // Block represents the different blocks in the modal
