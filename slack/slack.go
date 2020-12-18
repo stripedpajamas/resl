@@ -39,21 +39,22 @@ type ModalRequest struct {
 	ResponseURLS []ResponseURL   `json:"response_urls"`
 }
 
-// MessageRequestBody represents the incoming request body from Slack
-type MessageRequestBody struct {
-	APIAppID            string `schema:"api_app_id"`
-	ChannelID           string `schema:"channel_id"`
-	ChannelName         string `schema:"channel_name"`
-	AppCommand          string `schema:"command"`
-	IsEnterpriseInstall bool   `schema:"is_enterprise_install"`
-	ResponseURL         string `schema:"response_url"`
-	TeamDomain          string `schema:"team_domain"`
-	TeamID              string `schema:"team_id"`
-	Text                string `schema:"text"`
-	Token               string `schema:"token"`
-	TriggerID           string `schema:"trigger_id"`
-	UserID              string `schema:"user_id"`
-	UserName            string `schema:"user_name"`
+// Request represents the incoming request body from Slack
+type Request struct {
+	APIAppID            string       `schema:"api_app_id"`
+	ChannelID           string       `schema:"channel_id"`
+	ChannelName         string       `schema:"channel_name"`
+	AppCommand          string       `schema:"command"`
+	IsEnterpriseInstall bool         `schema:"is_enterprise_install"`
+	ResponseURL         string       `schema:"response_url"`
+	TeamDomain          string       `schema:"team_domain"`
+	TeamID              string       `schema:"team_id"`
+	Text                string       `schema:"text"`
+	Token               string       `schema:"token"`
+	TriggerID           string       `schema:"trigger_id"`
+	UserID              string       `schema:"user_id"`
+	UserName            string       `schema:"user_name"`
+	Payload             ModalRequest `schema:"payload"`
 }
 
 // PublicAcknowledgement shows the originally sent command in the channel
