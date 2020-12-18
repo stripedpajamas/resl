@@ -11,20 +11,54 @@ import (
 
 const slackViewsOpenURL = "https://slack.com/api/views.open"
 
-// SlackResponse contains the properties necessary to respond to a message
-type SlackResponse struct {
+// Response contains the properties necessary to respond to a message
+type Response struct {
 	ResponseType string `json:"response_type,omitempty"`
 	Text         string `json:"text,omitempty"`
 }
 
-type SlackModal struct {
-	TriggerID string          `json:"trigger_id"`
-	View      ModalDefinition `json:"view"`
+// User represents a slack user
+type User struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	Name     string `json:"name"`
+}
+
+// ResponseURL represents a slack response url object
+type ResponseURL struct {
+	ActionID  string `json:"action_id"`
+	ChannelID string `json:"channel_id"`
+	URL       string `json:"response_url"`
+}
+
+// ModalRequest represents the request sent to trigger a modal and received from a modal
+type ModalRequest struct {
+	TriggerID    string          `json:"trigger_id"`
+	View         ModalDefinition `json:"view"`
+	User         User            `json:"user"`
+	ResponseURLS []ResponseURL   `json:"response_urls"`
+}
+
+// MessageRequestBody represents the incoming request body from Slack
+type MessageRequestBody struct {
+	APIAppID            string `schema:"api_app_id"`
+	ChannelID           string `schema:"channel_id"`
+	ChannelName         string `schema:"channel_name"`
+	AppCommand          string `schema:"command"`
+	IsEnterpriseInstall bool   `schema:"is_enterprise_install"`
+	ResponseURL         string `schema:"response_url"`
+	TeamDomain          string `schema:"team_domain"`
+	TeamID              string `schema:"team_id"`
+	Text                string `schema:"text"`
+	Token               string `schema:"token"`
+	TriggerID           string `schema:"trigger_id"`
+	UserID              string `schema:"user_id"`
+	UserName            string `schema:"user_name"`
 }
 
 // PublicAcknowledgement shows the originally sent command in the channel
 func PublicAcknowledgement() ([]byte, error) {
-	return json.Marshal(SlackResponse{
+	return json.Marshal(Response{
 		ResponseType: "in_channel",
 	})
 }
@@ -32,14 +66,14 @@ func PublicAcknowledgement() ([]byte, error) {
 // PrivateAcknowledgement sends back a "visible to only you" message to the
 // command initiator
 func PrivateAcknowledgement(text string) ([]byte, error) {
-	return json.Marshal(SlackResponse{
+	return json.Marshal(Response{
 		Text: text,
 	})
 }
 
 // SendChannelResponse sends text to a response url in a channel
 func SendChannelResponse(url, text string) error {
-	reqBody, err := json.Marshal(SlackResponse{
+	reqBody, err := json.Marshal(Response{
 		ResponseType: "in_channel",
 		Text:         text,
 	})
@@ -67,7 +101,7 @@ func SendModal(triggerID, languageName, placeholder string) error {
 
 	authToken := os.Getenv("SLACK_TOKEN")
 
-	reqBody, err := json.Marshal(SlackModal{
+	reqBody, err := json.Marshal(ModalRequest{
 		TriggerID: triggerID,
 		View:      GenerateRESLModal(languageName, placeholder),
 	})
