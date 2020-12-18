@@ -91,28 +91,20 @@ func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProces
 func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Request, error) {
 	formData := payload.View.State.Values
 
-	log.Print(formData)
-
 	elementVal, ok := formData[slack.CodeBlockName]
 	if !ok {
 		return slack.Request{}, errors.New("Code block not found")
 	}
-
-	log.Print(elementVal)
 
 	inputVal, ok := elementVal[slack.CodeActionID]
 	if !ok {
 		return slack.Request{}, errors.New("Code action not found")
 	}
 
-	log.Print(inputVal)
-
 	inputJSON, err := json.Marshal(inputVal)
 	if err != nil {
 		return slack.Request{}, err
 	}
-
-	log.Print(string(inputJSON))
 
 	var codeInput slack.InputElement
 	err = json.Unmarshal([]byte(inputJSON), &codeInput)
@@ -163,8 +155,6 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	log.Printf("%+v\n", body)
-
-	log.Printf(body.ModalPayload)
 
 	var modalBody slack.ModalRequest
 
@@ -231,7 +221,14 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return createErrorResponse(500, err, "Error while invoking the code process lambda")
 	}
 
-	res, err := slack.PublicAcknowledgement()
+	var res []byte
+
+	if body.ModalPayload != "" {
+		res, err = slack.ClearModal()
+	} else {
+		res, err = slack.PublicAcknowledgement()
+	}
+
 	if err != nil {
 		return createErrorResponse(500, err, "")
 	}
