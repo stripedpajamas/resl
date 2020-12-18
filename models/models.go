@@ -10,6 +10,7 @@ import (
 // LanguageProperties represents properties for running each supported language
 type LanguageProperties struct {
 	Name           string `json:"langName"`
+	ShortName      string `json:"shortName"`
 	Extension      string `json:"extension"`
 	Placeholder    string `json:"placeholder"`
 	FileName       string `json:"fileName"`
