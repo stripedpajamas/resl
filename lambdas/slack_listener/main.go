@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -36,6 +37,16 @@ func parseText(text string) (string, string) {
 	}
 
 	return trimmedText[0:spaceIdx], trimmedText[spaceIdx+1:]
+}
+
+func createErrorResponse(code int, err error, message string) (events.APIGatewayProxyResponse, error) {
+	if message == "" {
+		message = "Error found"
+	}
+	log.Printf("%s: %s\n", message, err.Error())
+	return events.APIGatewayProxyResponse{
+		StatusCode: code,
+	}, err
 }
 
 func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProcessRequest, error) {
@@ -75,6 +86,34 @@ func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProces
 	}, nil
 }
 
+func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Request, error) {
+	formData := payload.View.State.Values
+
+	val, ok := formData[slack.CodeBlockName]
+	if !ok {
+		return slack.Request{}, errors.New("Code block not found")
+	}
+
+	inputJSON, err := json.Marshal(val)
+	if err != nil {
+		return slack.Request{}, err
+	}
+
+	var codeInput slack.InputElement
+	err = json.Unmarshal([]byte(inputJSON), &codeInput)
+	if err != nil {
+		return slack.Request{}, err
+	}
+
+	if codeInput.Value == "" {
+		return slack.Request{}, errors.New("No code present in the modal input")
+	}
+
+	return slack.Request{
+		Text: fmt.Sprintf("%s %s", payload.View.PrivateMetadata, codeInput.Value),
+	}, nil
+}
+
 func parseFormRequest(body string) (slack.Request, error) {
 	decoded, err := base64.StdEncoding.DecodeString(body)
 	if err != nil {
@@ -100,15 +139,26 @@ func parseFormRequest(body string) (slack.Request, error) {
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	body, err := parseFormRequest(request.Body)
 	if err != nil {
-		log.Printf("Error while parsing request: %s\n", err.Error())
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-		}, err
+		return createErrorResponse(500, err, "Error while parsing request")
 	}
 
 	log.Printf("%+v\n", body)
 
-	log.Printf(body.Payload)
+	log.Printf(body.ModalPayload)
+
+	var modalBody slack.ModalRequest
+
+	if body.ModalPayload != "" {
+		err := json.Unmarshal([]byte(body.ModalPayload), &modalBody)
+		if err != nil {
+			return createErrorResponse(500, err, "Error while parsing modal body")
+		}
+
+		body, err = createRequestBodyFromModalPayload(modalBody)
+		if err != nil {
+			return createErrorResponse(400, err, "Error while processing modal body")
+		}
+	}
 
 	codeProcessRequest, err := getCodePayloadFromRequestBody(body)
 	if err != nil {
@@ -116,10 +166,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		responseBody, serializationErr := slack.PrivateAcknowledgement(err.Error())
 
 		if serializationErr != nil {
-			log.Printf("Failed to serialize parsing error for Slack: %s\n", err.Error())
-			return events.APIGatewayProxyResponse{
-				StatusCode: 500,
-			}, serializationErr
+			return createErrorResponse(500, err, "Failed to serialize parsing error for Slack")
 		}
 		return events.APIGatewayProxyResponse{
 			StatusCode: 200,
@@ -132,13 +179,10 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	// fire a modal back since no code was there
 	if codeProcessRequest.Code == "" {
-		err = slack.SendModal(body.TriggerID, codeProcessRequest.Props.Name, codeProcessRequest.Props.Placeholder)
+		err = slack.SendModal(body.TriggerID, codeProcessRequest.Props.Name, codeProcessRequest.Props.ShortName, codeProcessRequest.Props.Placeholder)
 
 		if err != nil {
-			log.Printf("Failed to send modal: %s\n", err.Error())
-			return events.APIGatewayProxyResponse{
-				StatusCode: 500,
-			}, err
+			return createErrorResponse(500, err, "Failed to send modal")
 		}
 
 		return events.APIGatewayProxyResponse{
@@ -148,10 +192,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	payload, err := json.Marshal(codeProcessRequest)
 	if err != nil {
-		log.Printf("Failed to serialize parsing error for Slack: %s\n", err.Error())
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-		}, err
+		return createErrorResponse(500, err, "Failed to serialize parsing error for Slack")
 	}
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -167,17 +208,12 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	if _, err = client.Invoke(&input); err != nil {
-		log.Printf("Error while invoking the code process lambda: %s\n", err.Error())
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-		}, err
+		return createErrorResponse(500, err, "Error while invoking the code process lambda")
 	}
 
 	res, err := slack.PublicAcknowledgement()
 	if err != nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: 500,
-		}, err
+		return createErrorResponse(500, err, "")
 	}
 
 	return events.APIGatewayProxyResponse{

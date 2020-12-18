@@ -2,18 +2,21 @@
 {
     "js": {
       "langName": "JavaScript",
+      "shortNane": "js",
       "placeholder": "console.log(\"Hello world\")",
       "extension": "js",
       "runCmd": "/usr/local/bin/node"
     },
     "py": {
       "langName": "Python",
+      "shortNane": "py",
       "placeholder": "print(\"Hello world\")",
       "extension": "py",
       "runCmd": "/usr/bin/python"
     },
     "py3": {
       "langName": "Python",
+      "shortNane": "py3",
       "placeholder": "print(\"Hello world\")",
       "extension": "py",
       "runCmd": "/usr/bin/python3"
