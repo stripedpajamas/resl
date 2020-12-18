@@ -12,6 +12,12 @@ type ConversationSelectElement struct {
 	SelectedConversation string `json:"selected_conversation,omitempty"`
 }
 
+// StaticSelectElement represents a slack select with static dropdown elements
+type StaticSelectElement struct {
+	Type           string       `json:"type,omitempty"`
+	SelectedOption SelectOption `json:"selected_option,omitempty"`
+}
+
 // ViewState represents the current state of each block element
 type ViewState struct {
 	Values map[string]map[string]interface{} `json:"values,omitempty"`
@@ -24,6 +30,7 @@ type ViewOptions struct {
 	Emoji bool   `json:"emoji,omitempty"`
 }
 
+// SelectOption represents a select element list item
 type SelectOption struct {
 	Text  ViewOptions `json:"text,omitempty"`
 	Value string      `json:"value,omitempty"`
