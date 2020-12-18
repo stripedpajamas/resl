@@ -25,8 +25,15 @@ var languageConfig models.LanguageConfig
 
 var decoder = schema.NewDecoder()
 
-// RequestBodyParser reprsents a function type for parsing the incoming request body
-type RequestBodyParser func(body string) (slack.Request, error)
+func createErrorResponse(code int, err error, message string) (events.APIGatewayProxyResponse, error) {
+	if message == "" {
+		message = "Error found"
+	}
+	log.Printf("%s: %s\n", message, err.Error())
+	return events.APIGatewayProxyResponse{
+		StatusCode: code,
+	}, err
+}
 
 func parseText(text string) (string, string) {
 	trimmedText := strings.Trim(text, " ")
@@ -37,16 +44,6 @@ func parseText(text string) (string, string) {
 	}
 
 	return trimmedText[0:spaceIdx], trimmedText[spaceIdx+1:]
-}
-
-func createErrorResponse(code int, err error, message string) (events.APIGatewayProxyResponse, error) {
-	if message == "" {
-		message = "Error found"
-	}
-	log.Printf("%s: %s\n", message, err.Error())
-	return events.APIGatewayProxyResponse{
-		StatusCode: code,
-	}, err
 }
 
 func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProcessRequest, error) {
@@ -155,7 +152,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return createErrorResponse(500, err, "Error while parsing request")
 	}
 
-	log.Printf("%+v\n", body)
+	log.Printf("Parsed Body: %+v\n", body)
 
 	var modalBody slack.ModalRequest
 
@@ -233,6 +230,8 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	if err != nil {
 		return createErrorResponse(500, err, "")
 	}
+
+	log.Printf("Responding to slack: %s", res)
 
 	return events.APIGatewayProxyResponse{
 		Body:       string(res),
