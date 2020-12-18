@@ -1,7 +1,7 @@
 package slack
 
-// CodeInputElement represents the slack modal code input model
-type CodeInputElement struct {
+// InputElement represents the slack input model
+type InputElement struct {
 	Type  string `json:"type,omitempty"`
 	Value string `json:"value,omitempty"`
 }
@@ -12,14 +12,8 @@ type ConversationSelectElement struct {
 	SelectedConversation string `json:"selected_conversation,omitempty"`
 }
 
-// ActionTypes represents the different slack modal elements
-type ActionTypes struct {
-	CodeInput          *CodeInputElement          `json:"code_input,omitempty"`
-	ConversationSelect *ConversationSelectElement `json:"conversation_select_action,omitempty"`
-}
-
 // ViewState represents the current state of each block element
-type ViewState map[string]ActionTypes
+type ViewState map[string]map[string]interface{}
 
 // ViewOptions represents the options for the elements
 type ViewOptions struct {
