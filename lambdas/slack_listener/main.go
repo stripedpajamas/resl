@@ -108,6 +108,8 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	log.Printf("%+v\n", body)
 
+	log.Printf(body.Payload)
+
 	codeProcessRequest, err := getCodePayloadFromRequestBody(body)
 	if err != nil {
 		log.Printf("Error while parsing language and code from request: %s\n", err.Error())
