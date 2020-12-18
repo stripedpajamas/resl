@@ -25,7 +25,7 @@ var languageConfig models.LanguageConfig
 var decoder = schema.NewDecoder()
 
 // RequestBodyParser reprsents a function type for parsing the incoming request body
-type RequestBodyParser func(body string) (slack.MessageRequestBody, error)
+type RequestBodyParser func(body string) (slack.Request, error)
 
 func parseText(text string) (string, string) {
 	trimmedText := strings.Trim(text, " ")
@@ -38,7 +38,7 @@ func parseText(text string) (string, string) {
 	return trimmedText[0:spaceIdx], trimmedText[spaceIdx+1:]
 }
 
-func getCodePayloadFromRequestBody(requestBody slack.MessageRequestBody) (models.CodeProcessRequest, error) {
+func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProcessRequest, error) {
 	language, code := parseText(requestBody.Text)
 
 	props, found := languageConfig[language]
@@ -75,23 +75,23 @@ func getCodePayloadFromRequestBody(requestBody slack.MessageRequestBody) (models
 	}, nil
 }
 
-func parseFormRequest(body string) (slack.MessageRequestBody, error) {
+func parseFormRequest(body string) (slack.Request, error) {
 	decoded, err := base64.StdEncoding.DecodeString(body)
 	if err != nil {
-		return slack.MessageRequestBody{}, err
+		return slack.Request{}, err
 	}
 
 	form, err := url.ParseQuery(string(decoded))
 	if err != nil {
-		return slack.MessageRequestBody{}, err
+		return slack.Request{}, err
 	}
 
 	log.Printf("Request form %s\n", form)
 
-	var payload slack.MessageRequestBody
+	var payload slack.Request
 	err = decoder.Decode(&payload, form)
 	if err != nil {
-		return slack.MessageRequestBody{}, err
+		return slack.Request{}, err
 	}
 
 	return payload, nil
