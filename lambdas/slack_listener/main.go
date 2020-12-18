@@ -155,8 +155,10 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	log.Printf("Parsed Body: %+v\n", body)
 
 	var modalBody slack.ModalRequest
+	isModal := false
 
 	if body.ModalPayload != "" {
+		isModal = true
 		err := json.Unmarshal([]byte(body.ModalPayload), &modalBody)
 		if err != nil {
 			return createErrorResponse(500, err, "Error while parsing modal body")
@@ -186,7 +188,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	// fire a modal back since no code was there and modal is not alreay present
-	if codeProcessRequest.Code == "" && body.ModalPayload == "" {
+	if !isModal && codeProcessRequest.Code == "" {
 		err = slack.SendModal(body.TriggerID, codeProcessRequest.Props.Name, codeProcessRequest.Props.ShortName, codeProcessRequest.Props.Placeholder)
 
 		if err != nil {
@@ -221,7 +223,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	var res []byte
 
-	if body.ModalPayload != "" {
+	if isModal {
 		res, err = slack.ClearModal()
 	} else {
 		res, err = slack.PublicAcknowledgement()
