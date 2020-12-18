@@ -123,6 +123,7 @@ func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Reques
 	return slack.Request{
 		Text:        fmt.Sprintf("%s %s", payload.View.PrivateMetadata, codeInput.Value),
 		ResponseURL: payload.ResponseURLS[0].URL,
+		TriggerID:   payload.TriggerID,
 	}, nil
 }
 
