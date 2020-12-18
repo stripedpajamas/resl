@@ -195,8 +195,8 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		}, nil
 	}
 
-	// fire a modal back since no code was there
-	if codeProcessRequest.Code == "" {
+	// fire a modal back since no code was there and modal is not alreay present
+	if codeProcessRequest.Code == "" && body.ModalPayload == "" {
 		err = slack.SendModal(body.TriggerID, codeProcessRequest.Props.Name, codeProcessRequest.Props.ShortName, codeProcessRequest.Props.Placeholder)
 
 		if err != nil {
