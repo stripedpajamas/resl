@@ -11,52 +11,6 @@ import (
 
 const slackViewsOpenURL = "https://slack.com/api/views.open"
 
-// Response contains the properties necessary to respond to a message
-type Response struct {
-	ResponseType string `json:"response_type,omitempty"`
-	Text         string `json:"text,omitempty"`
-}
-
-// User represents a slack user
-type User struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Name     string `json:"name"`
-}
-
-// ResponseURL represents a slack response url object
-type ResponseURL struct {
-	ActionID  string `json:"action_id"`
-	ChannelID string `json:"channel_id"`
-	URL       string `json:"response_url"`
-}
-
-// ModalRequest represents the request sent to trigger a modal and received from a modal
-type ModalRequest struct {
-	TriggerID    string          `json:"trigger_id"`
-	View         ModalDefinition `json:"view"`
-	User         User            `json:"user"`
-	ResponseURLS []ResponseURL   `json:"response_urls"`
-}
-
-// Request represents the incoming request body from Slack
-type Request struct {
-	APIAppID            string `schema:"api_app_id"`
-	ChannelID           string `schema:"channel_id"`
-	ChannelName         string `schema:"channel_name"`
-	AppCommand          string `schema:"command"`
-	IsEnterpriseInstall bool   `schema:"is_enterprise_install"`
-	ResponseURL         string `schema:"response_url"`
-	TeamDomain          string `schema:"team_domain"`
-	TeamID              string `schema:"team_id"`
-	Text                string `schema:"text"`
-	Token               string `schema:"token"`
-	TriggerID           string `schema:"trigger_id"`
-	UserID              string `schema:"user_id"`
-	UserName            string `schema:"user_name"`
-	Payload             string `schema:"payload"`
-}
-
 // PublicAcknowledgement shows the originally sent command in the channel
 func PublicAcknowledgement() ([]byte, error) {
 	return json.Marshal(Response{
