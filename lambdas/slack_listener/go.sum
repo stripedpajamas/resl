@@ -41,6 +41,8 @@ github.com/stripedpajamas/resl/models v0.0.0-20201218020038-24fe53fb50fe h1:EJM9
 github.com/stripedpajamas/resl/models v0.0.0-20201218020038-24fe53fb50fe/go.mod h1:k1L0ietgJ5ctnSET5HRbsm7F2yf3Xd9a0E9zEOVuib4=
 github.com/stripedpajamas/resl/models v0.0.0-20201218025630-b90e9f0c9f29 h1:j6JXA8HH9Zp4bu/cFjAVPkgbBwayu7SKlYEglg31+IE=
 github.com/stripedpajamas/resl/models v0.0.0-20201218025630-b90e9f0c9f29/go.mod h1:k1L0ietgJ5ctnSET5HRbsm7F2yf3Xd9a0E9zEOVuib4=
+github.com/stripedpajamas/resl/models v0.0.0-20201218031106-629e960a561c h1:4FamXIsYAQfr0mT73uYXPWOtyAbIqgdcygi6CYvgwc8=
+github.com/stripedpajamas/resl/models v0.0.0-20201218031106-629e960a561c/go.mod h1:k1L0ietgJ5ctnSET5HRbsm7F2yf3Xd9a0E9zEOVuib4=
 github.com/stripedpajamas/resl/slack v0.0.0-20201216055245-644bd3f4e6c0 h1:eEjVHPjL6llUgxniFQQOr0jkG2H1VCM7LFEZh4nGoHM=
 github.com/stripedpajamas/resl/slack v0.0.0-20201216055245-644bd3f4e6c0/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
 github.com/stripedpajamas/resl/slack v0.0.0-20201216060300-568ae751e16d h1:C7aXOBFUbN5BoaMSYwoZlCOQjBfLnZpel9aDUwKFgEg=
@@ -67,6 +69,8 @@ github.com/stripedpajamas/resl/slack v0.0.0-20201218020038-24fe53fb50fe h1:gqwBG
 github.com/stripedpajamas/resl/slack v0.0.0-20201218020038-24fe53fb50fe/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
 github.com/stripedpajamas/resl/slack v0.0.0-20201218025630-b90e9f0c9f29 h1:6vCmYPRTqteXhbs8CP1Xw16ZX/g9myQ828BadHXXKQk=
 github.com/stripedpajamas/resl/slack v0.0.0-20201218025630-b90e9f0c9f29/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
+github.com/stripedpajamas/resl/slack v0.0.0-20201218031106-629e960a561c h1:ZZe5dqbG9u6IghMNJjehOe6IrkJNQ7PKssWqH8aw3b8=
+github.com/stripedpajamas/resl/slack v0.0.0-20201218031106-629e960a561c/go.mod h1:LnOjnFk6BoZYe5VPr1e6mdn0yHNJXRaYoMJJesNOp38=
 github.com/urfave/cli/v2 v2.2.0/go.mod h1:SE9GqnLQmjVa0iPEY0f1w3ygNIYcIJ0OKPMoW2caLfQ=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
