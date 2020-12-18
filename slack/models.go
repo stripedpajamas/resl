@@ -57,8 +57,9 @@ type ModalDefinition struct {
 
 // Response contains the properties necessary to respond to a message
 type Response struct {
-	ResponseType string `json:"response_type,omitempty"`
-	Text         string `json:"text,omitempty"`
+	ResponseAction string `json:"response_action,omitempty"`
+	ResponseType   string `json:"response_type,omitempty"`
+	Text           string `json:"text,omitempty"`
 }
 
 // User represents a slack user

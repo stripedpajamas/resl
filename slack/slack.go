@@ -26,6 +26,13 @@ func PrivateAcknowledgement(text string) ([]byte, error) {
 	})
 }
 
+// ClearModal sends back a response action to clear the resl slack modal
+func ClearModal() ([]byte, error) {
+	return json.Marshal(Response{
+		ResponseAction: "clear",
+	})
+}
+
 // SendChannelResponse sends text to a response url in a channel
 func SendChannelResponse(url, text string) error {
 	reqBody, err := json.Marshal(Response{
