@@ -4,7 +4,7 @@ package slack
 const CodeBlockName = "main_code_block"
 
 // CodeActionID represents the name of the code element action
-const CodeActionID = "code_block"
+const CodeActionID = "code_input"
 
 // ConversationSelectBlockName represents the name of the modal convo select block
 const ConversationSelectBlockName = "response_block"
