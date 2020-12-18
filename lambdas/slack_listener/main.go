@@ -50,6 +50,8 @@ func createErrorResponse(code int, err error, message string) (events.APIGateway
 }
 
 func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProcessRequest, error) {
+	log.Printf("Request Body: %+v\n", requestBody)
+
 	language, code := parseText(requestBody.Text)
 
 	props, found := languageConfig[language]

@@ -1,24 +1,23 @@
-
 {
-    "js": {
-      "langName": "JavaScript",
-      "shortName": "js",
-      "placeholder": "console.log(\"Hello world\")",
-      "extension": "js",
-      "runCmd": "/usr/local/bin/node"
-    },
-    "py": {
-      "langName": "Python",
-      "shortName": "py",
-      "placeholder": "print(\"Hello world\")",
-      "extension": "py",
-      "runCmd": "/usr/bin/python"
-    },
-    "py3": {
-      "langName": "Python",
-      "shortName": "py3",
-      "placeholder": "print(\"Hello world\")",
-      "extension": "py",
-      "runCmd": "/usr/bin/python3"
-    }
+  "js": {
+    "langName": "JavaScript",
+    "shortName": "js",
+    "placeholder": "console.log(\"Hello world\")",
+    "extension": "js",
+    "runCmd": "/usr/local/bin/node"
+  },
+  "py": {
+    "langName": "Python",
+    "shortName": "py",
+    "placeholder": "print(\"Hello world\")",
+    "extension": "py",
+    "runCmd": "/usr/bin/python"
+  },
+  "py3": {
+    "langName": "Python",
+    "shortName": "py3",
+    "placeholder": "print(\"Hello world\")",
+    "extension": "py",
+    "runCmd": "/usr/bin/python3"
   }
+}
