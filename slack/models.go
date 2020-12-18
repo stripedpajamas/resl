@@ -13,7 +13,9 @@ type ConversationSelectElement struct {
 }
 
 // ViewState represents the current state of each block element
-type ViewState map[string]map[string]interface{}
+type ViewState struct {
+	Values map[string]map[string]interface{} `json:"values,omitempty"`
+}
 
 // ViewOptions represents the options for the elements
 type ViewOptions struct {
@@ -50,7 +52,7 @@ type ModalDefinition struct {
 	Close           *ViewOptions `json:"close,omitempty"`
 	PrivateMetadata string       `json:"private_metadata,omitempty"`
 	Blocks          []Block      `json:"blocks,omitempty"`
-	State           ViewState    `json:"state,omitempty"`
+	State           *ViewState   `json:"state,omitempty"`
 }
 
 // Response contains the properties necessary to respond to a message
