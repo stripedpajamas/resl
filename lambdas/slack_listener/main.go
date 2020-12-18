@@ -49,6 +49,14 @@ func parseText(text string) (string, string) {
 func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProcessRequest, error) {
 	log.Printf("Request Body: %+v\n", requestBody)
 
+	if requestBody.Text == "" {
+		return models.CodeProcessRequest{
+			ResponseURL: requestBody.ResponseURL,
+			Code:        "",
+			Props:       models.LanguageProperties{},
+		}, nil
+	}
+
 	language, code := parseText(requestBody.Text)
 
 	props, found := languageConfig[language]
