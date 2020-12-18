@@ -35,7 +35,7 @@ type ModalDefinition struct {
 
 // GenerateRESLModal returns a payload that contains a language-specific
 // resl modal
-func GenerateRESLModal(languageName, placeholder string) ModalDefinition {
+func GenerateRESLModal(languageName string, languageShortName string, placeholder string) ModalDefinition {
 	return ModalDefinition{
 		Type: "modal",
 		Title: &ViewOptions{
@@ -53,7 +53,7 @@ func GenerateRESLModal(languageName, placeholder string) ModalDefinition {
 			Text:  "Cancel",
 			Emoji: true,
 		},
-		PrivateMetadata: languageName,
+		PrivateMetadata: languageShortName,
 		Blocks: []Block{
 			Block{
 				BlockID: "main_block",
