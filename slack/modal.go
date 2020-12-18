@@ -3,6 +3,9 @@ package slack
 // CodeBlockName represents the name of the modal code block
 const CodeBlockName = "main_code_block"
 
+// CodeActionID represents the name of the code element action
+const CodeActionID = "code_block"
+
 // ConversationSelectBlockName represents the name of the modal convo select block
 const ConversationSelectBlockName = "response_block"
 
@@ -35,7 +38,7 @@ func GenerateRESLModal(languageName string, languageShortName string, placeholde
 				Type:    inputType,
 				Element: &Element{
 					Type:      "plain_text_input",
-					ActionID:  "code_input",
+					ActionID:  CodeActionID,
 					Multiline: true,
 					Placeholder: &ViewOptions{
 						Type: plainTextType,
