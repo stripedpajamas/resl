@@ -23,9 +23,6 @@ func authorizeRequest(next lambdaHandlerFunc) lambdaHandlerFunc {
 		timestamp := request.Headers["x-slack-request-timestamp"]
 		signature := request.Headers["x-slack-signature"]
 
-		log.Printf("Timestamp: %s\n", timestamp)
-		log.Printf("Signature: %s\n", signature)
-
 		now := time.Now().Unix()
 		t, err := strconv.ParseInt(timestamp, 10, 64)
 		if err != nil {

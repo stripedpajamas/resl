@@ -20,6 +20,10 @@ const inputType = "input"
 
 // GenerateRESLModal returns a payload that contains a language-specific resl modal
 func GenerateRESLModal(languageName string, languageShortName string, placeholder string) ModalDefinition {
+	if placeholder == "" {
+		placeholder = "Code goes here"
+	}
+
 	blocks := []Block{
 		Block{
 			BlockID: CodeBlockName,
