@@ -103,7 +103,7 @@ func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Reques
 		return slack.Request{}, err
 	}
 
-	log.Print(inputJSON)
+	log.Print(string(inputJSON))
 
 	var codeInput slack.InputElement
 	err = json.Unmarshal([]byte(inputJSON), &codeInput)
