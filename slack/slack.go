@@ -97,14 +97,14 @@ func SendChannelResponse(url, text string) error {
 
 // SendModal sends a modal to the user who typed the command. The modal
 // has language-specific placeholder code and shows the chosen language name
-func SendModal(triggerID, languageName, placeholder string) error {
+func SendModal(triggerID string, languageName string, languageShortName string, placeholder string) error {
 	client := &http.Client{}
 
 	authToken := os.Getenv("SLACK_TOKEN")
 
 	reqBody, err := json.Marshal(ModalRequest{
 		TriggerID: triggerID,
-		View:      GenerateRESLModal(languageName, placeholder),
+		View:      GenerateRESLModal(languageName, languageShortName, placeholder),
 	})
 	if err != nil {
 		return err
