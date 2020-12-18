@@ -96,10 +96,14 @@ func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Reques
 		return slack.Request{}, errors.New("Code block not found")
 	}
 
-	val, ok = formData["code_input"]
+	log.Print(val)
+
+	val, ok = formData[slack.CodeActionID]
 	if !ok {
 		return slack.Request{}, errors.New("Code action not found")
 	}
+
+	log.Print(val)
 
 	inputJSON, err := json.Marshal(val)
 	if err != nil {
