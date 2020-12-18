@@ -109,8 +109,13 @@ func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Reques
 		return slack.Request{}, errors.New("No code present in the modal input")
 	}
 
+	if payload.ResponseURLS == nil || len(payload.ResponseURLS) == 0 {
+		return slack.Request{}, errors.New("No response urls available in modal request")
+	}
+
 	return slack.Request{
-		Text: fmt.Sprintf("%s %s", payload.View.PrivateMetadata, codeInput.Value),
+		Text:        fmt.Sprintf("%s %s", payload.View.PrivateMetadata, codeInput.Value),
+		ResponseURL: payload.ResponseURLS[0].URL,
 	}, nil
 }
 
