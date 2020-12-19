@@ -49,6 +49,14 @@ func parseText(text string) (string, string) {
 func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProcessRequest, error) {
 	log.Printf("Request Body: %+v\n", requestBody)
 
+	if requestBody.Text == "" {
+		return models.CodeProcessRequest{
+			ResponseURL: requestBody.ResponseURL,
+			Code:        "",
+			Props:       models.LanguageProperties{},
+		}, nil
+	}
+
 	language, code := parseText(requestBody.Text)
 
 	props, found := languageConfig[language]
@@ -88,17 +96,34 @@ func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProces
 func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Request, error) {
 	formData := payload.View.State.Values
 
-	elementVal, ok := formData[slack.CodeBlockName]
+	codeElementVal, ok := formData[slack.CodeBlockName]
 	if !ok {
 		return slack.Request{}, errors.New("Code block not found")
 	}
 
-	inputVal, ok := elementVal[slack.CodeActionID]
+	language := payload.View.PrivateMetadata
+
+	languageElementVal, ok := formData[slack.LanguageBlockName]
+	if language == "" && !ok {
+		return slack.Request{}, errors.New("No language provided")
+	} else if ok && language == "" {
+		languageInputVal, ok := languageElementVal[slack.LanguageActionID]
+		if !ok {
+			return slack.Request{}, errors.New("Language action not found")
+		}
+
+		languageInputJson, err := json.Marshal(languageInputVal)
+		if err != nil {
+			return slack.Request{}, err
+		}
+	}
+
+	codeinputVal, ok := codeElementVal[slack.CodeActionID]
 	if !ok {
 		return slack.Request{}, errors.New("Code action not found")
 	}
 
-	inputJSON, err := json.Marshal(inputVal)
+	inputJSON, err := json.Marshal(codeinputVal)
 	if err != nil {
 		return slack.Request{}, err
 	}
@@ -118,7 +143,7 @@ func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Reques
 	}
 
 	return slack.Request{
-		Text:        fmt.Sprintf("%s %s", payload.View.PrivateMetadata, codeInput.Value),
+		Text:        fmt.Sprintf("%s %s", language, codeInput.Value),
 		ResponseURL: payload.ResponseURLS[0].URL,
 		TriggerID:   payload.TriggerID,
 	}, nil

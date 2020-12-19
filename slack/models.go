@@ -12,6 +12,12 @@ type ConversationSelectElement struct {
 	SelectedConversation string `json:"selected_conversation,omitempty"`
 }
 
+// StaticSelectElement represents a slack select with static dropdown elements
+type StaticSelectElement struct {
+	Type           string       `json:"type,omitempty"`
+	SelectedOption SelectOption `json:"selected_option,omitempty"`
+}
+
 // ViewState represents the current state of each block element
 type ViewState struct {
 	Values map[string]map[string]interface{} `json:"values,omitempty"`
@@ -24,14 +30,21 @@ type ViewOptions struct {
 	Emoji bool   `json:"emoji,omitempty"`
 }
 
+// SelectOption represents a select element list item
+type SelectOption struct {
+	Text  ViewOptions `json:"text,omitempty"`
+	Value string      `json:"value,omitempty"`
+}
+
 // Element represents an element inside the modal blocks
 type Element struct {
-	ActionID                     string       `json:"action_id,omitempty"`
-	Type                         string       `json:"type,omitempty"`
-	DefaultToCurrentConversation bool         `json:"default_to_current_conversation,omitempty"`
-	ResponseURLEnabled           bool         `json:"response_url_enabled,omitempty"`
-	Multiline                    bool         `json:"multiline,omitempty"`
-	Placeholder                  *ViewOptions `json:"placeholder,omitempty"`
+	ActionID                     string         `json:"action_id,omitempty"`
+	Type                         string         `json:"type,omitempty"`
+	DefaultToCurrentConversation bool           `json:"default_to_current_conversation,omitempty"`
+	ResponseURLEnabled           bool           `json:"response_url_enabled,omitempty"`
+	Multiline                    bool           `json:"multiline,omitempty"`
+	Placeholder                  *ViewOptions   `json:"placeholder,omitempty"`
+	Options                      []SelectOption `json:"options,omitempty"`
 }
 
 // Block represents the different blocks in the modal
