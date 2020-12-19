@@ -112,10 +112,18 @@ func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Reques
 			return slack.Request{}, errors.New("Language action not found")
 		}
 
-		languageInputJson, err := json.Marshal(languageInputVal)
+		languageInputJSON, err := json.Marshal(languageInputVal)
 		if err != nil {
 			return slack.Request{}, err
 		}
+
+		var languageInput slack.StaticSelectElement
+		err = json.Unmarshal([]byte(languageInputJSON), &languageInput)
+		if err != nil {
+			return slack.Request{}, err
+		}
+
+		language = languageInput.SelectedOption.Value
 	}
 
 	codeinputVal, ok := codeElementVal[slack.CodeActionID]

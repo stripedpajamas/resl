@@ -24,6 +24,10 @@ func GenerateRESLModal(languageName string, languageShortName string, placeholde
 		placeholder = "Code goes here"
 	}
 
+	if languageName == "" {
+		languageName = "Code"
+	}
+
 	blocks := []Block{
 		Block{
 			BlockID: CodeBlockName,
