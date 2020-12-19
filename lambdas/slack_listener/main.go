@@ -90,6 +90,7 @@ func getCodePayloadFromRequestBody(requestBody slack.Request) (models.CodeProces
 		ResponseURL: requestBody.ResponseURL,
 		Code:        code,
 		Props:       props,
+		UserID:      requestBody.UserID,
 	}, nil
 }
 
@@ -154,6 +155,7 @@ func createRequestBodyFromModalPayload(payload slack.ModalRequest) (slack.Reques
 		Text:        fmt.Sprintf("%s %s", language, codeInput.Value),
 		ResponseURL: payload.ResponseURLS[0].URL,
 		TriggerID:   payload.TriggerID,
+		UserID:      payload.User.UserID,
 	}, nil
 }
 
@@ -232,6 +234,8 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 			StatusCode: 200,
 		}, nil
 	}
+
+	codeProcessRequest.Modal = isModal
 
 	payload, err := json.Marshal(codeProcessRequest)
 	if err != nil {
