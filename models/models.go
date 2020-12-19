@@ -23,10 +23,11 @@ type LanguageConfig map[string]LanguageProperties
 
 // CodeProcessRequest represents the payload sent to the code runner lambda
 type CodeProcessRequest struct {
-	ResponseURL string             `json:"responseUrl"`
-	Code        string             `json:"code"`
-	Props       LanguageProperties `json:"props"`
-	User        string             `json:"user"`
+	ResponseURL string             `json:"responseUrl,omitempty"`
+	Code        string             `json:"code,omitempty"`
+	Props       LanguageProperties `json:"props,omitempty"`
+	UserID      string             `json:"userId,omitempty"`
+	Modal       bool               `json:"modal,omitempty"`
 }
 
 // ImportLanguageConfig reads and parses the languages configuration json file
