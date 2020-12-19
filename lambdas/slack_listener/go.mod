@@ -1,11 +1,11 @@
-module github.com/stripedpajamas/resl/lambdas/slack_listener
+module github.com/stripedpajamas/resl/lambdas/slack_responder
 
 go 1.15
 
 require (
 	github.com/aws/aws-lambda-go v1.20.0
-	github.com/aws/aws-sdk-go v1.36.4
+	github.com/aws/aws-sdk-go v1.36.12
 	github.com/gorilla/schema v1.2.0
-	github.com/stripedpajamas/resl/models v0.0.0-20201218050428-01800d5c42cb
-	github.com/stripedpajamas/resl/slack v0.0.0-20201218050428-01800d5c42cb
+	github.com/stripedpajamas/resl/models v0.0.0-20201218051945-0cc45f3e88a9
+	github.com/stripedpajamas/resl/slack v0.0.0-20201218051945-0cc45f3e88a9
 )
