@@ -27,8 +27,15 @@ func escapeString(s string) string {
 }
 
 // wraps a string in ```<string>```
-func wrapString(s string) string {
+func wrapString(request models.CodeProcessRequest, s string) string {
 	var b strings.Builder
+	if request.Modal {
+		b.WriteString("<@" + request.UserID + ">\n")
+		b.WriteString("```")
+		b.WriteString(request.Code)
+		b.WriteString("```")
+		b.WriteString("\n")
+	}
 	b.WriteString("```")
 	b.WriteString(s)
 	b.WriteString("```")
@@ -76,7 +83,10 @@ func handleRequest(ctx context.Context, request models.CodeProcessRequest) error
 		codeOutput.Output = "[No output]"
 	}
 
-	slack.SendChannelResponse(request.ResponseURL, wrapString(escapeString(string(codeOutput.Output))))
+	escapedOutput := escapeString(string(codeOutput.Output))
+	slackResponse := wrapString(request, escapedOutput)
+
+	slack.SendChannelResponse(request.ResponseURL, slackResponse)
 
 	return nil
 }
