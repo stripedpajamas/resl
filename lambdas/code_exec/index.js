@@ -4,6 +4,8 @@ const execa = require('execa')
 const ULID = require('ulid')
 
 exports.handler = async ({ code, props }) => {
+	if (props.warmup) return { temp: '9000' }
+
   console.log('Running Code Handler')
 
   const { extension, runCmd } = props
